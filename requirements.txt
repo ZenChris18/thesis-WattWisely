@@ -3,6 +3,7 @@ certifi==2024.12.14
 Django==5.1.4
 influxdb-client==1.48.0
 python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
 reactivex==4.0.4
 setuptools==75.6.0
 six==1.17.0
