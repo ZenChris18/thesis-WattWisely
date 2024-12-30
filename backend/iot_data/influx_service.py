@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Load environment variables from .env file
 
-# Update these with your InfluxDB configurations
 INFLUXDB_URL = os.getenv('INFLUXDB_URL')
 INFLUXDB_TOKEN = os.getenv('INFLUXDB_TOKEN')
 INFLUXDB_ORG = os.getenv('INFLUXDB_ORG')
