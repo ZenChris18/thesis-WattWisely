@@ -160,6 +160,4 @@ Once the project is ready for deployment, we will:
 If you encounter any issues, message the team group chat or check the documentation.
 
 🚀 **Happy Coding!**
-```
 
----
