@@ -150,11 +150,11 @@ python manage.py test
 
 ## 🌍 Deployment (Future)
 Once the project is ready for deployment, we will:
-- Dockerize the application.
-- Deploy it on a cloud platform like **Heroku/AWS/DigitalOcean**.
-- Configure a production database and environment variables.
-
----
+- **Dockerize the application** for easy deployment and scalability.
+- **Deploy it on a Raspberry Pi** using Docker.
+- Optionally, integrate it as a **Home Assistant Add-on**, which also uses Docker for seamless integration.
+- Configure **InfluxDB and Django** to work efficiently on the Raspberry Pi environment.
+- Set up **environment variables and security settings** for production use.
 
 ## ❓ Need Help?
 If you encounter any issues, message the team group chat or check the documentation.
@@ -163,12 +163,3 @@ If you encounter any issues, message the team group chat or check the documentat
 ```
 
 ---
-
-### ✅ Summary of Updates:
-- **Step-by-step setup** so your groupmates can easily set up the project.
-- **Added `.env` setup instructions** to protect API credentials.
-- **Listed API endpoints** so everyone knows how to test the backend.
-- **To-Do List** so the team can track what needs to be done.
-- **Commands for maintaining dependencies** to keep the environment consistent.
-
-This should make it easy for your team to collaborate without confusion. Let me know if you need modifications! 🚀
