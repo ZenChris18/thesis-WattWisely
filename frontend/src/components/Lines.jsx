@@ -6,7 +6,7 @@ function Lines(){
 
     const fetchData = async() => {
         try{
-            const response = await fetch("/MOCK_DATA.json"); // Adjust the path to your JSON file
+            const response = await fetch("/MOCK_DATA.json"); 
             const jsonData = await response.json();
             
             // Assuming JSON format: [{ "day": 1, "watt_usage": 10 }, { "day": 2, "watt_usage": 15 }]
@@ -20,7 +20,7 @@ function Lines(){
     };
 
     useEffect(() => {
-        fetchData(); // Fetch data on first render
+        fetchData(); 
     }, []);
 
     return(
