@@ -10,3 +10,44 @@ body {
   height: 100vh;
   box-sizing: border-box;
 }
+
+.layout-container {
+  display: flex; /* Ensures navbar stays on the side */
+}
+
+.navbar {
+  position: fixed; /* Keeps the sidebar fixed */
+  top: 0;
+  left: -100%; /* Start off-screen */
+  width: 230px;
+  height: 100vh;
+  background: #4a628a;
+  transition: left 0.5s ease-in-out;
+}
+
+.navbar.active {
+  left: 0; /* Slides in when active */
+}
+
+.content {
+  flex-grow: 1; /* Pushes content beside the navbar */
+  padding: 20px;
+  margin-left: 0; /* Default margin */
+  transition: margin-left 0.5s ease-in-out;
+}
+
+.navbar.active ~ .content {
+  margin-left: 230px; /* Pushes content when sidebar opens */
+}
+
+.menu-button {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: white;
+  z-index: 1000; /* Ensures it stays on top */
+}
