@@ -1,38 +1,81 @@
+/* Sidebar */
 .navbar {
-    width: 230px;
-    height: 95vh;
-    background: #4a628a;
-    position: absolute;
-    padding: 0 30px;
-    left: -100%;
-    transition: all 1s;
-  }
-  
-  .navbar.active {
-    left: 0;
-  }
-  
-  .navbar ul li a:hover , 
-  .navbar ul li a:active{
-    color: #f4f4f4;
-    background-color: #747bff;
-  }
-  
-  .navbar ul {
-    padding: 0;
-  }
-  
-  .navbar ul li {
-    list-style: none;
-    margin: 10px 0;
-  }
-  
-  .navbar ul li a {
-    font-size: 16px;
-    font-weight: 500;
-    display: block;
-    padding: 10px 15px;
-    border-radius: 6px;
-    color: #ffffff;
-    text-decoration: inherit;
-  }
+  width: 230px;
+  height: 100vh; /* Full height */
+  background: #4a628a;
+  position: fixed;
+  top: 0;
+  left: -100%;
+  padding: 60px 20px 20px; /* Adds space at the top */
+  transition: left 0.5s ease-in-out; /* Controls animation speed */
+  z-index: 1000;
+}
+
+/* Sidebar active (visible) */
+.navbar.active {
+  left: 0;
+}
+
+/* Pushes sidebar content down */
+.navbar h4 {
+  margin-top: 20px; /* Moves "WattWisely" lower */
+}
+
+/* Sidebar menu styles */
+.navbar ul {
+  padding: 0;
+}
+
+.navbar ul li {
+  list-style: none;
+  margin: 10px 0;
+}
+
+.navbar ul li a {
+  font-size: 16px;
+  font-weight: 500;
+  display: block;
+  padding: 10px 15px;
+  border-radius: 6px;
+  color: #ffffff;
+  text-decoration: inherit;
+}
+
+.navbar ul li a:hover,
+.navbar ul li a:active {
+  color: #f4f4f4;
+  background-color: #747bff;
+}
+
+/* Hamburger menu button (always visible) */
+.menu-button {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: white;
+  z-index: 1100;
+}
+
+.menu-button:hover {
+  color: #ccc;
+}
+
+/* Close button inside the sidebar */
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: white;
+}
+
+.close-button:hover {
+  color: #ccc;
+}
