@@ -1,0 +1,54 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.graph-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+h1 {
+    font-size: 36px;
+    color: white;
+    text-align: left;
+    margin-bottom: 40px;
+}
+
+button {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    background-color: #493D9E;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 00px;
+    align-self: flex-start;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #FFF2AF;
+}
+
+/* Adjusting button for mobile screens */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    button {
+        width: 100%;
+        padding: 15px;
+    }
+}

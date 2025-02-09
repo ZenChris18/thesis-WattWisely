@@ -2,7 +2,7 @@
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
 
-import "./index.css";
+import "./stylesheets/index.css";
 import HomePage from "./pages/HomePage.jsx";
 import GraphPage from "./pages/GraphPage.jsx";
 import AchievementPage from "./pages/AchievementPage.jsx";
