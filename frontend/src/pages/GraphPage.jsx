@@ -1,5 +1,5 @@
 import React from "react";
-import Lines from "../Components/Lines";
+import Lines from "../components/Lines";
 import MainLayout from "../layout/MainLayout";
 
 function GraphPage() {

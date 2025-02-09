@@ -1,0 +1,38 @@
+.navbar {
+    width: 230px;
+    height: 95vh;
+    background: #4a628a;
+    position: absolute;
+    padding: 0 30px;
+    left: -100%;
+    transition: all 1s;
+  }
+  
+  .navbar.active {
+    left: 0;
+  }
+  
+  .navbar ul li a:hover , 
+  .navbar ul li a:active{
+    color: #f4f4f4;
+    background-color: #747bff;
+  }
+  
+  .navbar ul {
+    padding: 0;
+  }
+  
+  .navbar ul li {
+    list-style: none;
+    margin: 10px 0;
+  }
+  
+  .navbar ul li a {
+    font-size: 16px;
+    font-weight: 500;
+    display: block;
+    padding: 10px 15px;
+    border-radius: 6px;
+    color: #ffffff;
+    text-decoration: inherit;
+  }
