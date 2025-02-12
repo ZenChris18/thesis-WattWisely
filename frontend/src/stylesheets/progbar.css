@@ -1,0 +1,26 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+}
+
+.progressbar{
+    position: relative;
+    overflow: hidden;
+    width: 350px;
+    height: 35px;
+    border-radius: 5px;
+    background-color: aqua;
+    margin-left: 590px;
+    margin-top: 100px;
+}
+
+.progPercentage{
+    font-weight: 600;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+}
