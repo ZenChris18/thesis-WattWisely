@@ -1,0 +1,70 @@
+.home-container {
+    min-height: 100vh;
+    background-color: #9169a5;
+    color: white;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  
+.daily-tasks {
+    border: 2px solid white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+  
+.task {
+    margin-bottom: 10px;
+}
+  
+.task p {
+    margin: 5px 0;
+}
+  
+.progress-bar {
+    width: 100%;
+    background-color: gray;
+    height: 20px;
+    border-radius: 10px;
+    position: relative;
+}
+  
+.progress-fill {
+    background-color: limegreen;
+    height: 100%;
+    border-radius: 10px;
+}
+  
+.task-button {
+    margin-top: 5px;
+    padding: 8px 15px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+  
+.task-button:disabled {
+    background-color: gray;
+}
+  
+.image-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+  
+.image-box {
+    width: 150px;
+    height: 150px;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+}
+  
