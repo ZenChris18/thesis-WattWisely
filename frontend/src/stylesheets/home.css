@@ -1,70 +1,112 @@
+/* Ensure the main container uses more screen space */
 .home-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     min-height: 100vh;
-    background-color: #9169a5;
-    color: white;
     padding: 20px;
-    font-family: Arial, sans-serif;
-    text-align: center;
   }
   
-.daily-tasks {
-    border: 2px solid white;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
+  /* Adjusting the wrapper to be wider */
+  .content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 90%;
+    max-width: 1400px;
+  }
   
+  /* Expanding the daily tasks section */
+  .daily-tasks {
+    flex: 1;
+    min-width: 350px;
+    max-width: 600px;
+    max-height: 500px; /* Limit height to show only 3 tasks initially */
+    overflow-y: auto; /* Enable vertical scrolling */
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center; 
+    
+    /* Move scrollbar to the left */
+    direction: rtl; 
+  }
+  
+  .daily-tasks * {
+    direction: ltr; /* Ensure text remains left-to-right */
+  }
+  
+  /* Custom scrollbar styling for Webkit browsers (Chrome, Edge, Safari) */
+  .daily-tasks::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .daily-tasks::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .daily-tasks::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+  }
+
+/* Make individual tasks larger */
 .task {
-    margin-bottom: 10px;
+  width: 90%; /* Adjust to fit inside the scrollable container */
+  max-width: 600px; /* Reduce max-width slightly */
+  padding: 15px; /* Keep padding balanced */
+  background-color: rgba(255, 255, 255, 0.15); /* Slightly more contrast */
+  border-radius: 8px;
+  margin: 10px auto; /* Centered margin */
 }
-  
-.task p {
-    margin: 5px 0;
-}
-  
+
+/* Increase progress bar width */
 .progress-bar {
-    width: 100%;
-    background-color: gray;
-    height: 20px;
-    border-radius: 10px;
-    position: relative;
+  width: 90%; /* Allow some spacing inside the task box */
+  height: 15px;
+  background-color: #ddd;
+  border-radius: 8px;
+  margin: 10px auto; /* Center the progress bar */
+  overflow: hidden;
 }
-  
+
 .progress-fill {
-    background-color: limegreen;
-    height: 100%;
-    border-radius: 10px;
+  height: 100%;
+  background-color: #4caf50;
+  transition: width 0.5s ease-in-out;
 }
-  
+
+/* Adjust buttons */
 .task-button {
-    margin-top: 5px;
-    padding: 8px 15px;
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  width: 90%; /* Make button fit better inside tasks */
+  padding: 10px 15px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
-  
+
 .task-button:disabled {
-    background-color: gray;
+  background-color: #888;
+  cursor: not-allowed;
 }
   
-.image-links {
+  /* Make the right-side links bigger and more distinct */
+  .image-links {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
     gap: 20px;
-}
+    flex: 1;
+    margin-left: 40px;
+  }
   
-.image-box {
-    width: 150px;
-    height: 150px;
-    border: 2px solid white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .image-box {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.2);
     text-align: center;
-    cursor: pointer;
-}
-  
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
