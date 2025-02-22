@@ -1,6 +1,8 @@
-from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from .influx_service import fetch_power_data
 
+@api_view(['GET'])
 def power_data_view(request):
     data = fetch_power_data()
-    return JsonResponse(data, safe=False, json_dumps_params={'indent': 4}) # So the json format looks clean
+    return Response(data)
