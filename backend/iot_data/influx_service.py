@@ -24,6 +24,7 @@ def fetch_power_data(entity_id="sonoff_1001e01d7b_power", start="-1h", stop="now
       |> filter(fn: (r) => r["domain"] == "sensor")
       |> aggregateWindow(every: {window_period}, fn: mean, createEmpty: true)
       |> fill(value: 0.0)
+      |> sort(columns: ["_time"], desc: true)
       |> yield(name: "mean")
     '''
     result = query_api.query(org=INFLUXDB_ORG, query=query)
