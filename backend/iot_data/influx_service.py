@@ -13,20 +13,22 @@ INFLUXDB_BUCKET = os.getenv('INFLUXDB_BUCKET')
 client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG)
 query_api = client.query_api()
 
-def fetch_power_data():
-    query = '''
-    from(bucket: "home_assistant")
-      |> range(start: -1h)  // Last hour of data
+# change when needed, this is for smartplug #2 if null in data equals it to 0
+def fetch_power_data(entity_id="sonoff_1001e01d7b_power", start="-1h", stop="now()", window_period="30s"):
+    query = f'''
+    from(bucket: "{INFLUXDB_BUCKET}")
+      |> range(start: {start}, stop: {stop})
       |> filter(fn: (r) => r["_measurement"] == "W")
+      |> filter(fn: (r) => r["entity_id"] == "{entity_id}")
       |> filter(fn: (r) => r["_field"] == "value")
       |> filter(fn: (r) => r["domain"] == "sensor")
-      |> filter(fn: (r) => r["entity_id"] == "sonoff_1002163433_power")
-      |> aggregateWindow(every: 30s, fn: mean, createEmpty: true)
+      |> aggregateWindow(every: {window_period}, fn: mean, createEmpty: true)
       |> fill(value: 0.0)
-      |> filter(fn: (r) => r["_value"] != 0.0 or exists r["_value"])
-      |> rename(columns: {entity_id: "sensor_entity_id"})
-      |> set(key: "sensor_entity_id", value: "sonoff_1002163433_power")
       |> yield(name: "mean")
     '''
     result = query_api.query(org=INFLUXDB_ORG, query=query)
     return [record.values for table in result for record in table.records]
+
+
+
+
