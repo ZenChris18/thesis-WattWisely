@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import "../stylesheets/index.css";
 import "../stylesheets/home.css";
 
@@ -32,40 +33,56 @@ const Home = () => {
   };
 
   return (
-    <div className="home-container">
-      <h1>Home Page</h1>
-
-      <div className="daily-tasks">
-        <h2>Daily Tasks</h2>
-        {tasks.map((progress, index) => (
-          <div key={index} className="task">
-            <p>Save Watts</p>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+    <motion.div
+      className="home-container"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Wrapper to align daily tasks and links properly */}
+      <div className="content-wrapper">
+        {/* Daily Tasks Section */}
+        <div className="daily-tasks">
+          <h2>Daily Tasks</h2>
+          {tasks.map((progress, index) => (
+            <div key={index} className="task">
+              <p>Save Watts</p>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+              </div>
+              <button
+                className="task-button"
+                onClick={() => completeTask(index)}
+                disabled={progress === 100}
+              >
+                {progress === 100 ? "Completed" : "Complete Task"}
+              </button>
             </div>
-            <button
-              className="task-button"
-              onClick={() => completeTask(index)}
-              disabled={progress === 100}
-            >
-              {progress === 100 ? "Completed" : "Complete Task"}
-            </button>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <div className="image-links">
-        {[
-          {name: "Achievements", img: "achievements.jpg", link: "/achieve" },
-          {name: "How to Use", img: "howtouse.jpg", link: "/how-to-use" },
-          {name: "Graphs", img: "graphs.jpg", link: "/graph" },
-        ].map((item, index) => (
-          <a key={index} href={item.link} className="image-box">
-            <p>{item.name}</p>
-          </a>
-        ))}
+        {/* Image Links Section */}
+        <div className="image-links">
+          {[
+            { name: "Achievements", link: "/achieve" },
+            { name: "How to Use", link: "/how-to-use" },
+            { name: "Graphs", link: "/graph" },
+          ].map((item, index) => (
+            <motion.a
+              key={index}
+              href={item.link}
+              className="image-box"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+            >
+              <p>{item.name}</p>
+            </motion.a>
+          ))}
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
