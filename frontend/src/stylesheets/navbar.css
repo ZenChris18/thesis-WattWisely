@@ -48,6 +48,7 @@
 }
 
 /* Hamburger menu button (always visible) */
+/* Bigger Clickable Menu Button */
 .menu-button {
   position: fixed;
   top: 15px;
@@ -55,27 +56,52 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 24px;
+  font-size: 30px;
   color: white;
   z-index: 1100;
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px; /* Increases clickable area */
+  min-width: 40px; /* Ensures tap target is large */
+  min-height: 40px;
 }
 
-.menu-button:hover {
-  color: #ccc;
+/* Change menu button when navbar is active */
+.navbar.active .menu-button {
+  color: #ff6b6b; /* Red color for "X" when open */
 }
 
-/* Close button inside the sidebar */
-.close-button {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 24px;
-  color: white;
+/* Navbar (Side Panel) */
+.navbar {
+  width: 230px;
+  height: 100vh;
+  background: #4a628a;
+  position: fixed;
+  top: 0;
+  left: -100%;
+  padding: 60px 20px 20px;
+  transition: left 0.5s ease-in-out;
+  z-index: 1000;
+  max-width: 80%;
 }
 
-.close-button:hover {
-  color: #ccc;
+/* Show Navbar when active */
+.navbar.active {
+  left: 0;
 }
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .navbar {
+    width: 75%;
+  }
+
+  .menu-button {
+    left: 10px;
+    top: 10px;
+  }
+}
+

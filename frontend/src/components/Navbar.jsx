@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FiMenu, FiX } from "react-icons/fi"; // react icon for hamburger menu
-import "../stylesheets/index.css";
+import { FiMenu, FiX } from "react-icons/fi"; // Hamburger (☰) and Close (✖)
 import "../stylesheets/navbar.css";
 
 function Navbar() {
@@ -13,17 +12,13 @@ function Navbar() {
 
     return (
         <div>
-            {/* Menu button is outside the navbar so it's always visible */}
+            {/* Menu Button: Toggles between ☰ and ✖ */}
             <button className="menu-button" onClick={toggleNavbar}>
-                <FiMenu size={24} />
+                {isActive ? <FiX size={30} /> : <FiMenu size={30} />}
             </button>
 
+            {/* Sidebar Navbar */}
             <div className={`navbar ${isActive ? "active" : ""}`}>
-                {/* Close button inside the navbar */}
-                <button className="close-button" onClick={toggleNavbar}>
-                    <FiX size={24} />
-                </button>
-
                 <h4>WattWisely</h4>
                 <ul className="navbar-menu">
                     <li><Link to="/" onClick={toggleNavbar}>Home</Link></li>
