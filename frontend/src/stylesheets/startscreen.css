@@ -1,0 +1,36 @@
+.start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #1e1e1e;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 24px;
+    z-index: 1000;
+    cursor: pointer;
+  }
+  
+  /*Blinking Text*/
+  .click-to-start {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #00c853;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .hidden {
+    opacity: 0;
+  }
+
+  .visible {
+    opacity: 1;
+  }
+
+
+  
+  

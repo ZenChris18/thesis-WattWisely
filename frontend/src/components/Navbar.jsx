@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FiMenu, FiX } from "react-icons/fi"; // react icon for hamburger menu
+import { FiMenu, FiX, FiLogOut } from "react-icons/fi"; // Added FiLogOut icon
 import "../stylesheets/index.css";
 import "../stylesheets/navbar.css";
 
-function Navbar() {
+function Navbar({ onExit }) {
     const [isActive, setIsActive] = useState(false);
 
     const toggleNavbar = () => {
@@ -13,13 +13,11 @@ function Navbar() {
 
     return (
         <div>
-            {/* Menu button is outside the navbar so it's always visible */}
             <button className="menu-button" onClick={toggleNavbar}>
                 <FiMenu size={24} />
             </button>
 
             <div className={`navbar ${isActive ? "active" : ""}`}>
-                {/* Close button inside the navbar */}
                 <button className="close-button" onClick={toggleNavbar}>
                     <FiX size={24} />
                 </button>
@@ -30,6 +28,13 @@ function Navbar() {
                     <li><Link to="/graph" onClick={toggleNavbar}>Graphs</Link></li>
                     <li><Link to="/achieve" onClick={toggleNavbar}>Achievements</Link></li>
                 </ul>
+
+                {/* Exit Button - Should be visible now */}
+                <div className="exit-container">
+                    <button className="exit-button" onClick={onExit}>
+                        <FiLogOut size={20} /> Exit
+                    </button>
+                </div>
             </div>
         </div>
     );
