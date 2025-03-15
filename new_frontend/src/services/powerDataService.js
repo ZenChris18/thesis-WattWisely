@@ -1,17 +1,54 @@
 export const fetchPowerData = async (timeframe) => {
-
-    try {
-      const url = `http://192.168.254.156:8000/api/power-data/?start=${timeframe}`; // change the ip if changing devices
-      console.log('Fetching:', url);
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-  
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching power data:', error);
-      return null;
+  // get graph data
+  try {
+    const url = `http://192.168.254.156:8000/api/power-data/?start=${timeframe}`; // change the IP if changing devices
+    console.log("Fetching:", url);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
-  };
-  
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching power data:", error);
+    return null;
+  }
+};
+
+// ✅ New function for fetching appliance names
+export const fetchApplianceNames = async () => {
+  try {
+    const url = "http://192.168.254.156:8000/names/get-names/";
+    console.log("Fetching appliance names:", url);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.names || {}; // Return the names object
+  } catch (error) {
+    console.error("Error fetching appliance names:", error);
+    return {};
+  }
+};
+
+// update appliance name
+export const updateApplianceName = async (id, newName) => {
+  try {
+    const response = await fetch("http://192.168.254.156:8000/names/update-name/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ entity_id: id, name: newName })
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update appliance name");
+    }
+
+    return newName; // Return the updated name
+  } catch (error) {
+    console.error("Error updating appliance name:", error);
+    return null;
+  }
+};

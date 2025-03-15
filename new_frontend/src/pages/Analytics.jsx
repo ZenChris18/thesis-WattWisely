@@ -6,7 +6,7 @@ import DashboardCard02 from '../partials/dashboard/DashboardCard02';
 import DashboardCard03 from '../partials/dashboard/DashboardCard03';
 import Banner from '../partials/Banner';
 import { Edit2 } from 'lucide-react';
-import { fetchPowerData } from '../services/powerDataService';
+import { fetchPowerData, fetchApplianceNames, updateApplianceName } from '../services/powerDataService';
 
 function Analytics() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,25 +25,25 @@ function Analytics() {
   const timeframeDropdownRef = useRef(null);
   const applianceDropdownRef = useRef(null);
 
-  // Mapping of user-friendly timeframes to API format
   const timeframeMapping = {
     "Past Hour": "-1h",
     "Past Day": "-1d",
     "Past Week": "-1w",
   };
 
-  // Fetch appliances based on selected timeframe
   const loadAppliances = async () => {
     try {
-      const formattedTimeframe = timeframeMapping[selectedTimeframe] || "-1h"; // Default to "-1h"
+      const formattedTimeframe = timeframeMapping[selectedTimeframe] || "-1h";
       const powerData = await fetchPowerData(formattedTimeframe);
+      const backendNames = await fetchApplianceNames();
 
       if (powerData?.appliances) {
         const fetchedAppliances = powerData.appliances.map((appliance, index) => ({
           id: appliance.entity_id,
-          name: applianceNames[appliance.entity_id] || `Appliance ${index + 1}`,
+          name: backendNames[appliance.entity_id] || `Appliance ${index + 1}`,
         }));
 
+        setApplianceNames(backendNames);
         setAppliances([
           { id: "choose", name: "Choose Appliance" },
           { id: "overall", name: "Overall" },
@@ -57,7 +57,7 @@ function Analytics() {
 
   useEffect(() => {
     loadAppliances();
-  }, [selectedTimeframe]);  // ✅ Fetches data whenever timeframe changes
+  }, [selectedTimeframe]);
 
   useEffect(() => {
     localStorage.setItem("applianceNames", JSON.stringify(applianceNames));
@@ -80,21 +80,31 @@ function Analytics() {
 
   const handleSelectTimeframe = (timeframe) => {
     setSelectedTimeframe(timeframe);
-    setDropdownOpen((prev) => ({ ...prev, timeframe: false }));
+    setDropdownOpen({ timeframe: false, appliance: false });
   };
 
   const handleSelectAppliance = (appliance) => {
     if (appliance.id === "choose") return;
     setSelectedAppliance(appliance);
-    setDropdownOpen((prev) => ({ ...prev, appliance: false }));
+    setDropdownOpen({ timeframe: false, appliance: false });
     setAppliances((prev) => prev.filter((item) => item.id !== "choose"));
   };
 
-  const handleEditAppliance = (id) => {
+  const handleEditAppliance = async (id) => {
     const newName = prompt("Enter new name for the appliance:", applianceNames[id] || "");
     if (newName) {
-      setApplianceNames((prev) => ({ ...prev, [id]: newName }));
+      const updatedName = await updateApplianceName(id, newName);
+      if (updatedName) {
+        setApplianceNames((prev) => ({ ...prev, [id]: updatedName }));
+      }
     }
+  };
+
+  const toggleDropdown = (dropdown) => {
+    setDropdownOpen((prev) => ({
+      timeframe: dropdown === "timeframe" ? !prev.timeframe : false,
+      appliance: dropdown === "appliance" ? !prev.appliance : false,
+    }));
   };
 
   return (
@@ -110,7 +120,7 @@ function Analytics() {
                 {/* Timeframe Dropdown */}
                 <div className="relative" ref={timeframeDropdownRef}>
                   <button
-                    onClick={() => setDropdownOpen((prev) => ({ ...prev, timeframe: !prev.timeframe }))}
+                    onClick={() => toggleDropdown("timeframe")}
                     className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-medium px-4 py-2 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                   >
                     {selectedTimeframe}
@@ -133,13 +143,16 @@ function Analytics() {
                 {/* Appliance Dropdown */}
                 <div className="relative" ref={applianceDropdownRef}>
                   <button
-                    onClick={() => setDropdownOpen((prev) => ({ ...prev, appliance: !prev.appliance }))}
+                    onClick={() => toggleDropdown("appliance")}
                     className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-medium px-4 py-2 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                   >
                     {selectedAppliance ? applianceNames[selectedAppliance.id] || selectedAppliance.name : "Choose Appliance"}
                   </button>
                   {dropdownOpen.appliance && (
-                    <div className="absolute left-0 top-full mt-1 min-w-[200px] bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg z-10">
+                    <div 
+                      className="absolute top-full mt-1 min-w-[200px] bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg z-10 max-w-xs overflow-auto"
+                      style={{ left: "auto", right: dropdownOpen.appliance ? "0" : "auto", maxHeight: "250px" }} 
+                    >
                       {appliances.map((appliance) => (
                         <div key={appliance.id} className="flex items-center justify-between px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
                           <button

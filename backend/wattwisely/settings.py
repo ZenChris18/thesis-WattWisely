@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'iot_data',
     'corsheaders',
+    'names',
 ]
 
 MIDDLEWARE = [
