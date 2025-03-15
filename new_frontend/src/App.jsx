@@ -13,6 +13,7 @@ import './charts/ChartjsConfig';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import Challenges from './pages/Challenges';
+import Achivements from './pages/Achievements'
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
         <Route exact path="/" element={<Dashboard />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path='/challenges' element={<Challenges />} />
+        <Route path='/achievements' element={<Achivements />} />
       </Routes>
     </>
   );

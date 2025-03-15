@@ -1,7 +1,7 @@
 export const fetchPowerData = async (timeframe) => {
 
     try {
-      const url = `http://localhost:8000/api/power-data/?start=${timeframe}`; // change the ip if changing devices
+      const url = `http://192.168.254.156:8000/api/power-data/?start=${timeframe}`; // change the ip if changing devices
       console.log('Fetching:', url);
       const response = await fetch(url);
       if (!response.ok) {
