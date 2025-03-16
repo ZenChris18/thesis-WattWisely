@@ -42,9 +42,8 @@ def calculate_power_metrics(appliance_data, time_interval=30, electricity_rate=1
     avg_power = (sum(power_values) / len(power_values)) if power_values else 0  # Average power
 
     return {
-        "total_power_w": total_power,  
+        "average_power_w": round(avg_power, 2),
         "energy_kwh": round(total_energy_kwh, 4),  
         "cost_estimation": round(cost_estimation, 2),  
         "peak_power_w": peak_power,  # 🔥 Now correctly considers only active devices
-        "average_power_w": round(avg_power, 2)
     }

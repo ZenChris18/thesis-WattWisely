@@ -5,7 +5,7 @@ from .services import calculate_power_metrics
 
 @api_view(['GET'])
 def power_data_view(request):
-    #add new smartplugs here
+    # Add new smartplugs here
     entity_ids = [
         "sonoff_1001e01d7b_power",
         "sonoff_1002163433_power"
@@ -35,21 +35,10 @@ def power_data_view(request):
     else:
         total_metrics = None  # No total if only one device is selected
 
-    # Prepare cleaned appliance data
-    current_appliance_data = [
-        {
-            "entity_id": entity_id,
-            "data": [
-                {
-                    "time": record["_time"],
-                    "power_w": record["_value"],  # Keep _value or rename if needed
-                    "measurement": record["_measurement"]
-                }
-                for record in raw_data
-            ]
-        }
-        for entity_id, raw_data in current_raw_data.items()
-    ]
+    # Calculate latest_data as the sum of all "average_power_w" values from appliances
+    latest_data = sum(
+        (metrics.get("average_power_w", 0)) for metrics in current_metrics_per_device.values()
+    )
 
     # Determine previous timeframe
     previous_timeframes = {
@@ -98,15 +87,29 @@ def power_data_view(request):
     if total_metrics:
         total_metrics["saved_money"] = total_saved_money
 
-# Format final response
+    # Format final response
     response_data = {
-        "current": total_metrics if total_metrics else current_metrics_per_device,
+        "current": {
+            **(total_metrics if total_metrics else current_metrics_per_device),
+            "latest_data": latest_data  # Updated to sum of "average_power_w"
+        },
         "previous": total_previous_metrics if total_previous_metrics else previous_metrics_per_device,
         "appliances": [
             {
                 "entity_id": entity_id,
-                "current": current_metrics_per_device.get(entity_id),  # Include current per device
-                "previous": previous_metrics_per_device.get(entity_id) if previous_metrics_per_device else None,  # Include previous per device
+                "current": {
+                    "average_power_w": current_metrics_per_device.get(entity_id, {}).get("average_power_w"),
+                    "energy_kwh": current_metrics_per_device.get(entity_id, {}).get("energy_kwh"),
+                    "cost_estimation": current_metrics_per_device.get(entity_id, {}).get("cost_estimation"),
+                    "peak_power_w": current_metrics_per_device.get(entity_id, {}).get("peak_power_w"),
+                    "saved_money": current_metrics_per_device.get(entity_id, {}).get("saved_money")
+                },
+                "previous": {
+                    "average_power_w": previous_metrics_per_device.get(entity_id, {}).get("average_power_w") if previous_metrics_per_device else None,
+                    "energy_kwh": previous_metrics_per_device.get(entity_id, {}).get("energy_kwh") if previous_metrics_per_device else None,
+                    "cost_estimation": previous_metrics_per_device.get(entity_id, {}).get("cost_estimation") if previous_metrics_per_device else None,
+                    "peak_power_w": previous_metrics_per_device.get(entity_id, {}).get("peak_power_w") if previous_metrics_per_device else None
+                } if previous_metrics_per_device else None,
                 "data": [
                     {
                         "time": record["_time"],

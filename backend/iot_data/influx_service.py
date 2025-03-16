@@ -29,7 +29,3 @@ def fetch_power_data(entity_id="sonoff_1001e01d7b_power", start="-1h", stop="now
     '''
     result = query_api.query(org=INFLUXDB_ORG, query=query)
     return [record.values for table in result for record in table.records]
-
-
-
-

@@ -1,54 +1,84 @@
-import React from 'react';
-import BarChart from '../../charts/BarChart01';
+import React, { useState, useEffect } from 'react';
+import PowerLineChart from '../../charts/PowerLineChart';
+import { fetchPowerData } from '../../services/powerDataService';
 
-// Import utilities
-import { getCssVariable } from '../../utils/Utils';
+function DashboardCard01({ selectedTimeframe, selectedAppliance }) {
+  const [chartData, setChartData] = useState([]);
+  const [displayedConsumption, setDisplayedConsumption] = useState(0);
 
-function DashboardCard04() {
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!selectedTimeframe) return;
 
-  const chartData = {
-    labels: [
-      '12-01-2022', '01-01-2023', '02-01-2023',
-      '03-01-2023', '04-01-2023', '05-01-2023',
-    ],
-    datasets: [
-      // Light blue bars
-      {
-        label: 'Direct',
-        data: [
-          800, 1600, 900, 1300, 1950, 1700,
-        ],
-        backgroundColor: getCssVariable('--color-sky-500'),
-        hoverBackgroundColor: getCssVariable('--color-sky-600'),
-        barPercentage: 0.7,
-        categoryPercentage: 0.7,
-        borderRadius: 4,
-      },
-      // Blue bars
-      {
-        label: 'Indirect',
-        data: [
-          4900, 2600, 5350, 4800, 5200, 4800,
-        ],
-        backgroundColor: getCssVariable('--color-violet-500'),
-        hoverBackgroundColor: getCssVariable('--color-violet-600'),
-        barPercentage: 0.7,
-        categoryPercentage: 0.7,
-        borderRadius: 4,
-      },
-    ],
-  };
+      const timeframeMap = {
+        'Past Hour': '-1h',
+        'Past Day': '-1d',
+        'Past Week': '-1w',
+      };
+
+      const timeframeParam = timeframeMap[selectedTimeframe] || '-1h';
+
+      const data = await fetchPowerData(timeframeParam);
+      if (!data) return;
+
+      let newChartData = [];
+      let consumptionValue = 0;
+
+      if (selectedAppliance && selectedAppliance.id !== "overall") {
+        // ✅ Specific device: Use average_power_w for that appliance
+        const selectedData = data.appliances?.find(appliance => appliance.entity_id === selectedAppliance.id);
+        if (selectedData) {
+          consumptionValue = selectedData.current?.average_power_w || 0;
+
+          newChartData = selectedData.data?.map(entry => ({
+            time: entry.time,
+            value: entry.power_w,
+          })).reverse() || [];
+        }
+      } else {
+        // ✅ "Overall": Use average_power_w from the "current" object
+        consumptionValue = data.current?.average_power_w || 0;
+
+        const combinedData = {};
+        data.appliances?.forEach(appliance => {
+          appliance.data.forEach(entry => {
+            if (!combinedData[entry.time]) {
+              combinedData[entry.time] = 0;
+            }
+            combinedData[entry.time] += entry.power_w;
+          });
+        });
+
+        newChartData = Object.entries(combinedData)
+          .map(([time, value]) => ({ time, value }))
+          .sort((a, b) => new Date(a.time) - new Date(b.time)); // Ensure correct order
+      }
+
+      setDisplayedConsumption(consumptionValue);
+      setChartData(newChartData);
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, [selectedTimeframe, selectedAppliance]);
 
   return (
-    <div className="flex flex-col col-span-full sm:col-span-6 bg-white dark:bg-gray-800 shadow-xs rounded-xl">
-      <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60">
-        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Direct VS Indirect</h2>
-      </header>
-      {/* Chart built with Chart.js 3 */}
-      {/* Change the height attribute to adjust the chart height */}
-      <BarChart data={chartData} width={595} height={248} />
+    <div className="col-span-12 sm:col-span-6 xl:col-span-4 bg-white dark:bg-gray-800 shadow-lg rounded-sm border border-gray-200 dark:border-gray-700">
+      <div className="px-5 py-4">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Average Power Usage</h2>
+        <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+          {displayedConsumption.toLocaleString()} W
+        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Avg. Power (W) over {selectedTimeframe}</p>
+      </div>
+  
+      <div className="grow max-h-[300px] xl:max-h-[300px]">
+        <PowerLineChart data={chartData} selectedTimeframe={selectedTimeframe} />
+      </div>
     </div>
   );
+  
 }
 
-export default DashboardCard04;
+export default DashboardCard01;

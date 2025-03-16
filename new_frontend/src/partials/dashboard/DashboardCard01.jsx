@@ -17,7 +17,6 @@ function DashboardCard01({ selectedTimeframe, selectedAppliance }) {
       };
 
       const timeframeParam = timeframeMap[selectedTimeframe] || '-1h';
-
       const data = await fetchPowerData(timeframeParam);
       if (!data) return;
 
@@ -25,19 +24,18 @@ function DashboardCard01({ selectedTimeframe, selectedAppliance }) {
       let consumptionValue = 0;
 
       if (selectedAppliance && selectedAppliance.id !== "overall") {
-        // ✅ Specific device: Use total_power_w for that appliance
+        // ✅ Specific device: Use average_power_w for that appliance
         const selectedData = data.appliances?.find(appliance => appliance.entity_id === selectedAppliance.id);
         if (selectedData) {
-          consumptionValue = selectedData.current?.total_power_w || 0;
-
+          consumptionValue = selectedData.current?.average_power_w || 0;
           newChartData = selectedData.data?.map(entry => ({
             time: entry.time,
             value: entry.power_w,
           })).reverse() || [];
         }
       } else {
-        // ✅ "Overall": Use total_power_w from the "current" object
-        consumptionValue = data.current?.total_power_w || 0;
+        // ✅ "Overall": Use latest_data from the "current" object
+        consumptionValue = data.current?.latest_data || 0;
 
         const combinedData = {};
         data.appliances?.forEach(appliance => {
@@ -66,13 +64,13 @@ function DashboardCard01({ selectedTimeframe, selectedAppliance }) {
   return (
     <div className="col-span-12 sm:col-span-6 xl:col-span-4 bg-white dark:bg-gray-800 shadow-lg rounded-sm border border-gray-200 dark:border-gray-700">
       <div className="px-5 py-4">
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Power Consumption</h2>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Current Power Usage</h2>
         <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
           {displayedConsumption.toLocaleString()} W
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Total usage in {selectedTimeframe}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Real-time power consumption</p>
       </div>
-
+  
       <div className="grow max-h-[300px] xl:max-h-[300px]">
         <PowerLineChart data={chartData} selectedTimeframe={selectedTimeframe} />
       </div>
