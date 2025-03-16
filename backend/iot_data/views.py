@@ -98,11 +98,26 @@ def power_data_view(request):
     if total_metrics:
         total_metrics["saved_money"] = total_saved_money
 
-    # Format final response
+# Format final response
     response_data = {
         "current": total_metrics if total_metrics else current_metrics_per_device,
         "previous": total_previous_metrics if total_previous_metrics else previous_metrics_per_device,
-        "appliances": current_appliance_data
+        "appliances": [
+            {
+                "entity_id": entity_id,
+                "current": current_metrics_per_device.get(entity_id),  # Include current per device
+                "previous": previous_metrics_per_device.get(entity_id) if previous_metrics_per_device else None,  # Include previous per device
+                "data": [
+                    {
+                        "time": record["_time"],
+                        "power_w": record["_value"],
+                        "measurement": record["_measurement"]
+                    }
+                    for record in raw_data
+                ]
+            }
+            for entity_id, raw_data in current_raw_data.items()
+        ]
     }
 
     return Response(response_data)

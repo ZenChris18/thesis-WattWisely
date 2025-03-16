@@ -4,7 +4,7 @@ import { fetchPowerData } from '../../services/powerDataService';
 
 function DashboardCard01({ selectedTimeframe, selectedAppliance }) {
   const [chartData, setChartData] = useState([]);
-  const [totalConsumption, setTotalConsumption] = useState(0);
+  const [displayedConsumption, setDisplayedConsumption] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,23 +22,24 @@ function DashboardCard01({ selectedTimeframe, selectedAppliance }) {
       if (!data) return;
 
       let newChartData = [];
-      let displayedConsumption = 0; // Number displayed at the top
+      let consumptionValue = 0;
 
       if (selectedAppliance && selectedAppliance.id !== "overall") {
-        // ✅ Specific device: Get its own power_w values
+        // ✅ Specific device: Use total_power_w for that appliance
         const selectedData = data.appliances?.find(appliance => appliance.entity_id === selectedAppliance.id);
-        
         if (selectedData) {
-          displayedConsumption = selectedData.data?.reduce((acc, entry) => acc + entry.power_w, 0) || 0;
-          newChartData = selectedData.data?.map((entry) => ({
+          consumptionValue = selectedData.current?.total_power_w || 0;
+
+          newChartData = selectedData.data?.map(entry => ({
             time: entry.time,
             value: entry.power_w,
           })).reverse() || [];
         }
       } else {
-        // ✅ "Overall": Sum up all appliances' power_w and use total_power_w for display
-        const combinedData = {};
+        // ✅ "Overall": Use total_power_w from the "current" object
+        consumptionValue = data.current?.total_power_w || 0;
 
+        const combinedData = {};
         data.appliances?.forEach(appliance => {
           appliance.data.forEach(entry => {
             if (!combinedData[entry.time]) {
@@ -51,11 +52,9 @@ function DashboardCard01({ selectedTimeframe, selectedAppliance }) {
         newChartData = Object.entries(combinedData)
           .map(([time, value]) => ({ time, value }))
           .sort((a, b) => new Date(a.time) - new Date(b.time)); // Ensure correct order
-        
-        displayedConsumption = data.current?.total_power_w || 0; // ✅ Show total power for "Overall"
       }
 
-      setTotalConsumption(displayedConsumption);
+      setDisplayedConsumption(consumptionValue);
       setChartData(newChartData);
     };
 
@@ -69,7 +68,7 @@ function DashboardCard01({ selectedTimeframe, selectedAppliance }) {
       <div className="px-5 py-4">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Power Consumption</h2>
         <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
-          {totalConsumption.toLocaleString()} W
+          {displayedConsumption.toLocaleString()} W
         </p>
         <p className="text-sm text-gray-500 dark:text-gray-400">Total usage in {selectedTimeframe}</p>
       </div>
