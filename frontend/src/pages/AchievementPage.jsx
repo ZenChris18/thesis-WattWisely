@@ -68,6 +68,7 @@ function AchievementPage() {
           newAchievements.push("The Journey Begins");
         }
 
+        // Cant save the completed achievements
         if (newAchievements.length > 0) {
           completedAchievements = [...completedAchievements, ...newAchievements];
 
