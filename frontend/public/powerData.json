@@ -1,14 +1,9 @@
 {
-    "start_date": "2025-03-10",
-    "history": [
-      {
-        "date": "2025-03-10",
-        "consumption": 350
-      },
-      {
-        "date": "2025-03-11",
-        "consumption": 700
-      }
-    ]
-  }
-  
+  "history": [
+    { "date": "2025-03-10", "consumption": 350 },
+    { "date": "2025-03-11", "consumption": 340 },
+    { "date": "2025-03-12", "consumption": 250 },
+    { "date": "2025-03-13", "consumption": 310 },
+    { "date": "2025-03-14", "consumption": 300 }
+  ]
+}
