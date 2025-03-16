@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PowerLineChart from '../../charts/PowerLineChart';
 import { fetchPowerData } from '../../services/powerDataService';
 
-function DashboardCard01({ selectedTimeframe }) {
+function DashboardCard01({ selectedTimeframe, selectedAppliance }) {
   const [chartData, setChartData] = useState([]);
   const [totalConsumption, setTotalConsumption] = useState(0);
 
@@ -21,20 +21,48 @@ function DashboardCard01({ selectedTimeframe }) {
       const data = await fetchPowerData(timeframeParam);
       if (!data) return;
 
-      setTotalConsumption(data.current?.total_power_w || 0);
+      let newChartData = [];
+      let displayedConsumption = 0; // Number displayed at the top
 
-      const newChartData = data.appliances?.[0]?.data?.map((entry) => ({
-        time: entry.time,
-        value: entry.power_w,
-      })).reverse() || [];
+      if (selectedAppliance && selectedAppliance.id !== "overall") {
+        // ✅ Specific device: Get its own power_w values
+        const selectedData = data.appliances?.find(appliance => appliance.entity_id === selectedAppliance.id);
+        
+        if (selectedData) {
+          displayedConsumption = selectedData.data?.reduce((acc, entry) => acc + entry.power_w, 0) || 0;
+          newChartData = selectedData.data?.map((entry) => ({
+            time: entry.time,
+            value: entry.power_w,
+          })).reverse() || [];
+        }
+      } else {
+        // ✅ "Overall": Sum up all appliances' power_w and use total_power_w for display
+        const combinedData = {};
 
+        data.appliances?.forEach(appliance => {
+          appliance.data.forEach(entry => {
+            if (!combinedData[entry.time]) {
+              combinedData[entry.time] = 0;
+            }
+            combinedData[entry.time] += entry.power_w;
+          });
+        });
+
+        newChartData = Object.entries(combinedData)
+          .map(([time, value]) => ({ time, value }))
+          .sort((a, b) => new Date(a.time) - new Date(b.time)); // Ensure correct order
+        
+        displayedConsumption = data.current?.total_power_w || 0; // ✅ Show total power for "Overall"
+      }
+
+      setTotalConsumption(displayedConsumption);
       setChartData(newChartData);
     };
 
     fetchData();
     const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
-  }, [selectedTimeframe]);
+  }, [selectedTimeframe, selectedAppliance]);
 
   return (
     <div className="col-span-12 sm:col-span-6 xl:col-span-4 bg-white dark:bg-gray-800 shadow-lg rounded-sm border border-gray-200 dark:border-gray-700">
