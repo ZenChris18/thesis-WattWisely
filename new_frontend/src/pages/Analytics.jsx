@@ -4,6 +4,7 @@ import Header from '../partials/Header';
 import DashboardCard01 from '../partials/dashboard/DashboardCard01';
 import DashboardCard02 from '../partials/dashboard/DashboardCard02';
 import DashboardCard03 from '../partials/dashboard/DashboardCard03';
+import DashboardCard05 from '../partials/dashboard/DashboardCard05';
 import { Edit2 } from 'lucide-react';
 import { fetchPowerData, fetchApplianceNames, updateApplianceName } from '../services/powerDataService';
 
@@ -180,8 +181,8 @@ function Analytics() {
             <div className="mt-8">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Power Usage Insights</h2>
               <div className="grid grid-cols-12 gap-6">
-                {/*<DashboardCard04 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />
-                <DashboardCard05 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />*/}
+                {/*<DashboardCard04 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} /> */}
+                <DashboardCard05 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />
               </div>
             </div>
           </div>
