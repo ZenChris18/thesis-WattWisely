@@ -8,7 +8,8 @@ def power_data_view(request):
     # Add new smartplugs here
     entity_ids = [
         "sonoff_1001e01d7b_power",
-        "sonoff_1002163433_power"
+        "sonoff_1002163433_power",
+        "sonoff_1001f80f23_power" # 3rd smartplug
     ]  
     device_param = request.GET.get("device", "all")  # Default: all devices
     timeframe = request.GET.get("start", "-1h")  # Default: last hour

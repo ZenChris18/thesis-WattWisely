@@ -183,7 +183,10 @@ function Analytics() {
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Power Usage Insights</h2>
               <div className="grid grid-cols-12 gap-6">
                 <DashboardCard05 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />
-                <DashboardCard06 selectedTimeframe={selectedTimeframe} />
+                {/* Adjust the col-span here to make it fill remaining space */}
+                <div className="col-span-12 xl:col-span-8">
+                  <DashboardCard06 selectedTimeframe={selectedTimeframe} />
+                </div>
               </div>
             </div>
           </div>

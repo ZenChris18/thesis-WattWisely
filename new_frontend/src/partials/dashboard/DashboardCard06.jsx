@@ -43,15 +43,16 @@ function DashboardCard06({ selectedTimeframe }) {
   }, [selectedTimeframe]);
 
   return (
-    <div className="col-span-12 sm:col-span-6 xl:col-span-4 bg-white dark:bg-gray-800 shadow-lg rounded-sm border border-gray-200 dark:border-gray-700">
+    <div className="col-span-12 sm:col-span-6 xl:col-span-4 bg-white dark:bg-gray-800 shadow-lg rounded-sm border border-gray-200 dark:border-gray-700 flex flex-col">
       <div className="px-5 py-4">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Appliance Power Breakdown</h2>
         <p className="text-sm text-gray-500 dark:text-gray-400">Percentage share of power consumption per appliance</p>
       </div>
 
-      <div className="grow max-h-[300px] xl:max-h-[300px]">
+      {/* This div now uses flex-grow and h-full to ensure the chart stretches correctly */}
+      <div className="flex-grow flex items-center justify-center h-[300px]">
         {!loading ? (
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={chartData}
