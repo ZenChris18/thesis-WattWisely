@@ -35,31 +35,36 @@ function AchievementPage() {
 
         let totalSavings = 0;
         const newAchievements = [];
-        
+
         // Compares the current day's consumption (history[i]) with the previous day's consumption (history[i - 1])
         for (let i = 1; i < history.length; i++) {
           const todayConsumption = history[i].consumption;
           const yesterdayConsumption = history[i - 1].consumption;
           const saved = yesterdayConsumption - todayConsumption;
           totalSavings += saved;
+
+          //console.log(saved)
+          //console.log(todayConsumption)
+          //console.log(todayConsumption - totalSavings)
+          //console.log(totalSavings)
         
         // Saved represents the difference between yesterday's consumption and today's consumption (yesterdayConsumption - todayConsumption)
-          if (!completedAchievements.includes("Wattling") && saved > 0) {
+          if (!completedAchievements.includes("Wattling") && saved >= 10) {
             newAchievements.push("Wattling");
           }
-          if (!completedAchievements.includes("Wattdawan") && saved > 50) {
+          if (!completedAchievements.includes("Wattdawan") && todayConsumption - totalSavings >= 50) {
             newAchievements.push("Wattdawan");
           }
-          if (!completedAchievements.includes("Watt Knight") && saved > 100) {
+          if (!completedAchievements.includes("Watt Knight") && todayConsumption - totalSavings >= 100) {
             newAchievements.push("Watt Knight");
           }
-          if (!completedAchievements.includes("Watt Master") && saved > 150) {
+          if (!completedAchievements.includes("Watt Master") && todayConsumption - totalSavings >= 150) {
             newAchievements.push("Watt Master");
           }
-          if (!completedAchievements.includes("Grand Master of Watts") && saved > 200) {
+          if (!completedAchievements.includes("Grand Master of Watts") && todayConsumption - totalSavings >= 200) {
             newAchievements.push("Grand Master of Watts");
           }
-          if (!completedAchievements.includes("Megawatt Master") && totalSavings > 250) {
+          if (!completedAchievements.includes("Megawatt Master") && todayConsumption - totalSavings >= 250) {
             newAchievements.push("Megawatt Master");
           }
         }
