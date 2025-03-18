@@ -2,12 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import Sidebar from '../partials/Sidebar';
 import Header from '../partials/Header';
-import FilterButton from '../components/DropdownFilter';
 import DashboardCard01 from '../partials/dashboard/DashboardCard01';
 import DashboardCard02 from '../partials/dashboard/DashboardCard02';
 import DashboardCard03 from '../partials/dashboard/DashboardCard03';
 import DashboardCardChallenges from '../partials/dashboard/DashboardCardChallenges';
-import Banner from '../partials/Banner';
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -97,7 +95,6 @@ function Dashboard() {
           </div>
         </main>
 
-        <Banner /> {/* remove this to remove advertisement */}
       </div>
     </div>
   );

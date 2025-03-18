@@ -113,85 +113,93 @@ function Analytics() {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <main className="grow">
-          <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-            <div className="sm:flex sm:justify-between sm:items-center mb-8">
-              <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Analytics</h1>
-              <div className="flex gap-4">
-                {/* Timeframe Dropdown */}
-                <div className="relative" ref={timeframeDropdownRef}>
-                  <button
-                    onClick={() => toggleDropdown("timeframe")}
-                    className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-medium px-4 py-2 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-                  >
-                    {selectedTimeframe}
-                  </button>
-                  {dropdownOpen.timeframe && (
-                    <div className="absolute left-0 top-full mt-1 min-w-[150px] bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg z-10">
-                      {Object.keys(timeframeMapping).map((timeframe) => (
-                        <button
-                          key={timeframe}
-                          onClick={() => handleSelectTimeframe(timeframe)}
-                          className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-                        >
-                          {timeframe}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
 
-                {/* Appliance Dropdown */}
-                <div className="relative" ref={applianceDropdownRef}>
-                  <button
-                    onClick={() => toggleDropdown("appliance")}
-                    className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-medium px-4 py-2 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-                  >
-                    {selectedAppliance ? applianceNames[selectedAppliance.id] || selectedAppliance.name : "Choose Appliance"}
-                  </button>
-                  {dropdownOpen.appliance && (
-                    <div 
-                      className="absolute top-full mt-1 min-w-[200px] bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg z-10 max-w-xs overflow-auto"
-                      style={{ left: "auto", right: dropdownOpen.appliance ? "0" : "auto", maxHeight: "250px" }} 
+        {/* Sticky Buttons Section */}
+        <div
+          className={`sticky top-0 bg-white dark:bg-gray-900 py-4 shadow-md transition-all duration-300 ${
+            sidebarOpen ? "z-10" : "z-50"
+          }`}
+        >
+          <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
+            {/* Timeframe Dropdown */}
+            <div className="relative" ref={timeframeDropdownRef}>
+              <button
+                onClick={() => toggleDropdown("timeframe")}
+                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-medium px-4 py-2 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                {selectedTimeframe}
+              </button>
+              {dropdownOpen.timeframe && (
+                <div className="absolute left-0 top-full mt-1 min-w-[150px] bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg z-10">
+                  {Object.keys(timeframeMapping).map((timeframe) => (
+                    <button
+                      key={timeframe}
+                      onClick={() => handleSelectTimeframe(timeframe)}
+                      className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                     >
-                      {appliances.map((appliance) => (
-                        <div key={appliance.id} className="flex items-center justify-between px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                          <button
-                            onClick={() => handleSelectAppliance(appliance)}
-                            className="text-left w-full"
-                          >
-                            {applianceNames[appliance.id] || appliance.name}
-                          </button>
-                          {appliance.id !== "overall" && appliance.id !== "choose" && (
-                            <Edit2 className="w-4 h-4 cursor-pointer" onClick={() => handleEditAppliance(appliance.id)} />
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                      {timeframe}
+                    </button>
+                  ))}
                 </div>
-              </div>
+              )}
             </div>
 
-            <div className="grid grid-cols-12 gap-6">
-              <DashboardCard01 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />
-              <DashboardCard02 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />
-              <DashboardCard03 />
-            </div>
-            {/* Power Usage Insights Section */}
-            <div className="mt-8">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Power Usage Insights</h2>
-              <div className="grid grid-cols-12 gap-6">
-                <DashboardCard05 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />
-                {/* Adjust the col-span here to make it fill remaining space */}
-                <div className="col-span-12 xl:col-span-8">
-                  <DashboardCard06 selectedTimeframe={selectedTimeframe} />
+            {/* Appliance Dropdown */}
+            <div className="relative" ref={applianceDropdownRef}>
+              <button
+                onClick={() => toggleDropdown("appliance")}
+                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-medium px-4 py-2 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                {selectedAppliance ? (applianceNames[selectedAppliance.id] || selectedAppliance.name) : "Choose Appliance"}
+              </button>
+              {dropdownOpen.appliance && (
+                <div className="absolute top-full mt-1 min-w-[200px] bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg z-10 max-w-xs overflow-auto" style={{ maxHeight: "250px" }}>
+                  {appliances.map((appliance) => (
+                    <div key={appliance.id} className="flex items-center justify-between px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                      <button
+                        onClick={() => handleSelectAppliance(appliance)}
+                        className="text-left w-full truncate max-w-[150px]"
+                        title={applianceNames[appliance.id] || appliance.name}
+                      >
+                        {applianceNames[appliance.id] || appliance.name}
+                      </button>
+                      {appliance.id !== "overall" && appliance.id !== "choose" && (
+                        <Edit2 className="w-4 h-4 cursor-pointer" onClick={() => handleEditAppliance(appliance.id)} />
+                      )}
+                    </div>
+                  ))}
                 </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <main className="grow px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col gap-6">
+            {/* Full-width DashboardCard01 */}
+            <DashboardCard01 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />
+
+            {/* DashboardCard02 & DashboardCard03 side by side using grid-cols-12 */}
+            <div className="grid grid-cols-12 gap-6">
+              <DashboardCard02 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} className="col-span-6" />
+              <DashboardCard03 className="col-span-6" />
+              <DashboardCard03 className="col-span-6" /> {/* Placeholder for now change in the future with a new card*/}
+            </div>
+
+            {/* Power Usage Insights Section */}
+            <div className="mt-8 space-y-6">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Power Usage Insights</h2>
+
+              {/* Full-width DashboardCard05 */}
+              <div className="pb-6">
+                <DashboardCard05 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />
               </div>
+
+              {/* Full-width DashboardCard06 */}
+              <DashboardCard06 selectedTimeframe={selectedTimeframe} />
             </div>
           </div>
         </main>
-
       </div>
     </div>
   );
