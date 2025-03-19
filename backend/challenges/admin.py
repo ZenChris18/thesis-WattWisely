@@ -1,15 +1,18 @@
 from django.contrib import admin
-from .models import Challenge, UserChallenge
+from .models import Challenge, WeeklyChallenge
 
 class ChallengeAdmin(admin.ModelAdmin):
-    list_display = ("title", "requirement_kwh", "status", "date_completed")  # Columns shown in admin
-    list_filter = ("status",)  # Add filters for completed/incomplete challenges
-    search_fields = ("title",)  # Allow searching by title
-    ordering = ("status", "requirement_kwh")  # Order by completion status and kWh requirement
+    list_display = ("title", "requirement_kwh", "status", "date_completed", "points")
+    list_filter = ("status",)
+    search_fields = ("title",)
+    ordering = ("status", "requirement_kwh")
 
-class UserChallengeAdmin(admin.ModelAdmin):
-    list_display = ("user", "challenge", "completed_at")
-    list_filter = ("completed_at",)
+class WeeklyChallengeAdmin(admin.ModelAdmin):
+    list_display = ("title", "requirement_kwh", "description", "date_completed", "points", "status")
+    list_filter = ("status",)  # Only filter by status now
+    search_fields = ("title",)
+    ordering = ("status", "title")  # Remove week_start from ordering
+
 
 admin.site.register(Challenge, ChallengeAdmin)
-admin.site.register(UserChallenge, UserChallengeAdmin)
+admin.site.register(WeeklyChallenge, WeeklyChallengeAdmin)

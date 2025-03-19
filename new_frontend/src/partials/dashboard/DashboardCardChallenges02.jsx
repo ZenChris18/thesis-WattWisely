@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { fetchChallenges, completeChallenge, claimChallengePoints, fetchPowerData } from "../../services/powerDataService";
+import { fetchWeeklyChallenges, completeWeeklyChallenge, claimWeeklyChallengePoints, fetchPowerData } from "../../services/powerDataService";
 
-function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
-  const [challenges, setChallenges] = useState([]);
+function DashboardCardChallenges02({ showAll = false, onPointsClaimed }) {
+  const [weeklyChallenges, setWeeklyChallenges] = useState([]);
   const [expandedChallenge, setExpandedChallenge] = useState(null);
   const [savedEnergy, setSavedEnergy] = useState(0);
 
   useEffect(() => {
     const loadChallenges = async () => {
-      const challengeData = await fetchChallenges();
+      const challengeData = await fetchWeeklyChallenges();
     
-      // ✅ Make sure `claimed` is always either true or false
+      // ✅ Ensure `claimed` is always either true or false
       const fixedChallenges = challengeData.map(challenge => ({
         ...challenge,
         claimed: challenge.claimed || false, 
@@ -20,10 +20,9 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
       sortAndSetChallenges(fixedChallenges);
       loadPowerDataAndCheckChallenges(fixedChallenges);
     };
-    
 
     const loadPowerDataAndCheckChallenges = async (loadedChallenges) => {
-      const powerData = await fetchPowerData("-1d");
+      const powerData = await fetchPowerData("-7d"); // Fetch last 7 days of energy data
 
       if (powerData?.current && powerData?.previous) {
         const saved = powerData.previous.energy_kwh - powerData.current.energy_kwh;
@@ -33,7 +32,7 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
 
         const completionPromises = loadedChallenges.map(async (challenge) => {
           if (!challenge.status && saved >= challenge.requirement_kwh) {
-            const success = await completeChallenge(challenge.id);
+            const success = await completeWeeklyChallenge(challenge.id);
             if (success) updated = true;
           }
         });
@@ -55,7 +54,7 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
         return 0;
       });
     
-      setChallenges(showAll ? sortedChallenges : sortedChallenges.slice(0, 3));
+      setWeeklyChallenges(showAll ? sortedChallenges : sortedChallenges.slice(0, 3));
     };
     
     loadChallenges();
@@ -65,9 +64,9 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
   }, [showAll]);
 
   const handleClaimPoints = async (challengeId, points) => {
-    const success = await claimChallengePoints(challengeId);
+    const success = await claimWeeklyChallengePoints(challengeId);
     if (success) {
-      setChallenges((prev) =>
+      setWeeklyChallenges((prev) =>
         prev.map((c) =>
           c.id === challengeId ? { ...c, claimed: true } : c
         )
@@ -98,10 +97,10 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
       <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
-        🎯 Daily Challenges
+        🏆 Weekly Challenges
       </h2>
       <ul>
-        {challenges.map((challenge) => {
+        {weeklyChallenges.map((challenge) => {
           const meetsRequirement = savedEnergy >= challenge.requirement_kwh;
           const progress = challenge.status
             ? 100
@@ -117,7 +116,6 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {challenge.title} ({challenge.points || 0} pts)
                 </span>
-
 
                 {challenge.status ? (
                   challenge.claimed ? (
@@ -178,8 +176,8 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
 
       {!showAll && (
         <div className="mt-4 text-center">
-          <Link to="/challenges" className="text-sm text-blue-600 font-semibold hover:underline">
-            See All Challenges →
+          <Link to="/weekly-challenges" className="text-sm text-blue-600 font-semibold hover:underline">
+            See All Weekly Challenges →
           </Link>
         </div>
       )}
@@ -187,4 +185,4 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
   );
 }
 
-export default DashboardCardChallenges;
+export default DashboardCardChallenges02;

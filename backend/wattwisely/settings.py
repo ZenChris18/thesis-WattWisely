@@ -27,6 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+# settings.py
+CSRF_TRUSTED_ORIGINS = [
+    "http://192.168.254.156:5173",
+    "http://localhost:5173",
+]
+
+
 
 # Application definition
 
