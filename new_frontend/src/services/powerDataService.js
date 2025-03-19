@@ -52,3 +52,46 @@ export const updateApplianceName = async (id, newName) => {
     return null;
   }
 };
+
+// ✅ Fetch all challenges
+export const fetchChallenges = async () => {
+  try {
+    const response = await fetch(`http://192.168.254.156:8000/challenges/?t=${new Date().getTime()}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch challenges. Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.challenges || [];
+  } catch (error) {
+    console.error("Error fetching challenges:", error);
+    return [];
+  }
+};
+
+// ✅ Complete a challenge
+export const completeChallenge = async (challengeId) => {
+  try {
+    const response = await fetch("http://192.168.254.156:8000/challenges/complete/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: challengeId }),
+    });
+
+    const result = await response.json();
+    console.log("Challenge Completion Response:", result);
+
+    if (!response.ok) {
+      throw new Error(`Failed to update challenge: ${result.error || "Unknown error"}`);
+    }
+
+    return result.success || false;  // Return true if successful, false otherwise
+  } catch (error) {
+    console.error("Error completing challenge:", error);
+    return false;
+  }
+};
+
+
+
+
+

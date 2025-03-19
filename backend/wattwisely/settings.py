@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'iot_data',
     'corsheaders',
     'names',
+    'challenges',
 ]
 
 MIDDLEWARE = [
