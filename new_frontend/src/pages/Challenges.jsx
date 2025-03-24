@@ -40,7 +40,7 @@ function Challenges() {
               Challenges
             </h1>
             <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
-              🌟 Total Points: {totalPoints}
+              🌟 Watt Points: {totalPoints}
             </h2>
 
             {/* ✅ Wrap challenges in a div with spacing */}
