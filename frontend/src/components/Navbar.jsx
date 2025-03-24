@@ -5,34 +5,38 @@ import "../stylesheets/index.css";
 import "../stylesheets/navbar.css";
 
 function Navbar() {
-    const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
-    const toggleNavbar = () => {
-        setIsActive(!isActive);
-    };
+  const toggleNavbar = () => {
+    setIsActive(!isActive);
+  };
 
-    return (
-        <div>
-            {/* Menu button is outside the navbar so it's always visible */}
-            <button className="menu-button" onClick={toggleNavbar}>
-                <FiMenu size={24} />
-            </button>
+  return (
+    <div>
+      {/* Menu button is outside the navbar so it's always visible */}
+      <button className="menu-button" onClick={toggleNavbar}>
+        <FiMenu size={24} />
+      </button>
 
-            <div className={`navbar ${isActive ? "active" : ""}`}>
-                {/* Close button inside the navbar */}
-                <button className="close-button" onClick={toggleNavbar}>
-                    <FiX size={24} />
-                </button>
+      <div className={`navbar ${isActive ? "active" : ""}`}>
+        {/* Close button inside the navbar */}
+        <button className="close-button" onClick={toggleNavbar}>
+          <FiX size={24} />
+        </button>
 
-                <h4>WattWisely</h4>
-                <ul className="navbar-menu">
-                    <li><Link to="/" onClick={toggleNavbar}>Home</Link></li>
-                    <li><Link to="/graph" onClick={toggleNavbar}>Graphs</Link></li>
-                    <li><Link to="/achieve" onClick={toggleNavbar}>Achievements</Link></li>
-                </ul>
-            </div>
-        </div>
-    );
+        <h4>WattWisely</h4>
+        <ul className="navbar-menu">
+          <li><Link to="/" onClick={toggleNavbar}>Home</Link></li>
+          <li><Link to="/graph" onClick={toggleNavbar}>Graphs</Link></li>
+          <li>
+            <Link to="/achieve" onClick={toggleNavbar}>Achievements</Link>
+            {/* Add red dot next to the Achievements link */}
+            <div className="red-dot"></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
 }
 
 export default Navbar;
