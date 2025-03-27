@@ -15,3 +15,5 @@
 6. make new card (stats) in analytics tab
 7. remove extra tabs or page in sidebar
 8. remove extra headers 
+9. make ip address dynamic
+10. 
