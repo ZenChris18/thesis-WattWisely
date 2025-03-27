@@ -1,7 +1,7 @@
 export const fetchPowerData = async (timeframe) => {
   // get graph data
   try {
-    const url = `http://192.168.254.156:8000/api/power-data/?start=${timeframe}`; // change the IP if changing devices
+    const url = `http://192.168.116.27:8000/api/power-data/?start=${timeframe}`; // change the IP if changing devices
     console.log("Fetching:", url);
     const response = await fetch(url);
     if (!response.ok) {
@@ -18,7 +18,7 @@ export const fetchPowerData = async (timeframe) => {
 // ✅ New function for fetching appliance names
 export const fetchApplianceNames = async () => {
   try {
-    const url = "http://192.168.254.156:8000/names/get-names/";
+    const url = "http://localhost:8000/names/get-names/";
     console.log("Fetching appliance names:", url);
     const response = await fetch(url);
     if (!response.ok) {
@@ -36,7 +36,7 @@ export const fetchApplianceNames = async () => {
 // update appliance name
 export const updateApplianceName = async (id, newName) => {
   try {
-    const response = await fetch("http://192.168.254.156:8000/names/update-name/", {
+    const response = await fetch("http://localhost:8000/names/update-name/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ entity_id: id, name: newName })
@@ -55,7 +55,7 @@ export const updateApplianceName = async (id, newName) => {
 
 export const fetchChallenges = async () => {
   try {
-    const response = await fetch(`http://192.168.254.156:8000/challenges/?t=${new Date().getTime()}`);
+    const response = await fetch(`http://localhost:8000/challenges/?t=${new Date().getTime()}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch challenges. Status: ${response.status}`);
     }
@@ -74,7 +74,7 @@ export const fetchChallenges = async () => {
 
 export const fetchWeeklyChallenges = async () => {
   try {
-    const response = await fetch("http://192.168.254.156:8000/challenges/weekly/");
+    const response = await fetch("http://localhost:8000/challenges/weekly/");
     if (!response.ok) {
       throw new Error(`Failed to fetch weekly challenges. Status: ${response.status}`);
     }
@@ -90,7 +90,7 @@ export const fetchWeeklyChallenges = async () => {
 // ✅ Complete a challenge
 export const completeChallenge = async (challengeId) => {
   try {
-    const response = await fetch("http://192.168.254.156:8000/challenges/complete/", {
+    const response = await fetch("http://localhost:8000/challenges/complete/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: challengeId }),
@@ -112,7 +112,7 @@ export const completeChallenge = async (challengeId) => {
 
 export const claimChallengePoints = async (challengeId) => {
   try {
-    const response = await fetch("http://192.168.254.156:8000/challenges/claim-points/", {
+    const response = await fetch("http://localhost:8000/challenges/claim-points/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challenge_id: challengeId }),
@@ -133,7 +133,7 @@ export const claimChallengePoints = async (challengeId) => {
 // ✅ Complete a weekly challenge
 export const completeWeeklyChallenge = async (challengeId) => {
   try {
-    const response = await fetch("http://192.168.254.156:8000/challenges/weekly/complete/", {
+    const response = await fetch("http://localhost:8000/challenges/weekly/complete/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: challengeId }),
@@ -156,7 +156,7 @@ export const completeWeeklyChallenge = async (challengeId) => {
 // ✅ Claim points for a weekly challenge
 export const claimWeeklyChallengePoints = async (challengeId) => {
   try {
-    const response = await fetch("http://192.168.254.156:8000/challenges/weekly/claim-points/", {
+    const response = await fetch("http://localhost:8000/challenges/weekly/claim-points/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challenge_id: challengeId }),
