@@ -1,12 +1,16 @@
-## Thesis-wattwisely
+# Thesis-wattwisely
 
-# commands to make frontend and backend run
+## before starting
+1. make env file
+
+## commands to make frontend and backend run
 
 1. django - python manage.py runserver 0.0.0.0:8000 (go to backend folder)
 
 2. npm run dev -- --host (go to new_frontend folder)
 
-# To do:
+
+## To do:
 1. Add badges icon to total points achievements
 2. Change wording in cards and challenge names
 3. Add First time opening animation 
