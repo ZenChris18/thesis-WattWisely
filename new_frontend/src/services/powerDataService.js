@@ -1,4 +1,4 @@
-const IP = "192.168.254.156"; // Change this if the IP address if changing wifi
+const IP = "0.0.0.0"; // Change this if the IP address if changing wifi
 
 export const fetchPowerData = async (timeframe) => {
   // get graph data

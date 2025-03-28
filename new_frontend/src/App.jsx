@@ -1,5 +1,5 @@
 //Real Code
-/*import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import './css/style.css';
@@ -54,13 +54,13 @@ function App() {
   );
 }
 
-export default App;*/
+export default App;
 
 
 
 //For Testing
 
-import React, { useEffect, useState } from 'react';
+/* import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion'; // Import AnimatePresence
 import './css/style.css';
@@ -113,5 +113,5 @@ function App() {
 }
 
 export default App;
-
+*/
  
