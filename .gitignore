@@ -3,3 +3,4 @@ wattwisely_env/
 __pycache__/
 .env
 backend/.env
+venv
