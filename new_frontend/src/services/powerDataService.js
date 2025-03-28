@@ -1,4 +1,4 @@
-const IP = "0.0.0.0"; // Change this if the IP address if changing wifi
+const IP = "localhost"; // Change this if the IP address if changing wifi // localhost if django is on the same network
 
 export const fetchPowerData = async (timeframe) => {
   // get graph data
