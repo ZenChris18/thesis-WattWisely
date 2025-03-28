@@ -2,18 +2,24 @@ import React, { useState, useEffect } from "react";
 import { FaLightbulb } from "react-icons/fa";
 
 function DashboardCard03() {
-  // List of energy-saving tips
   const tips = [
-    "Turn off lights when not in use.",
-    "Unplug devices when they're fully charged.",
-    "Use energy-efficient LED bulbs.",
-    "Adjust your thermostat to save energy.",
-    "Wash clothes in cold water to save heating costs.",
-    "Use natural sunlight instead of artificial lighting during the day.",
-    "Seal doors and windows to prevent heat loss.",
-    "Turn off electronics instead of leaving them on standby mode.",
-    "Use a power strip to easily switch off multiple devices.",
-    "Limit the use of space heaters—they consume a lot of electricity."
+    "Turn off lights and appliances when not in use.",
+    "Unplug chargers and gadgets once the battery is full.",
+    "Use LED bulbs—they last longer and consume less electricity.",
+    "Electric fans use less power than air conditioners—use them when possible.",
+    "Clean electric fan blades and aircon filters regularly for better efficiency.",
+    "Avoid frequently opening and closing the refrigerator to keep the cold air inside.",
+    "Place refrigerators in a cool spot—away from heat sources or direct sunlight.",
+    "Turn off the TV or radio if no one is watching or listening.",
+    "Avoid overloading extension cords to prevent overheating and power waste.",
+    "Iron clothes in batches instead of one at a time to save energy.",
+    "Do full loads of laundry instead of washing small batches frequently.",
+    "Turn off electric fans when no one is in the room.",
+    "Using a stovetop kettle instead of an electric kettle can save electricity, especially if you boil water often.",
+    "Cook rice in a rice cooker right before mealtime to avoid keeping it in 'warm' mode for too long.",
+    "Defrost your freezer regularly to maintain efficiency and reduce energy consumption.",
+    "If using an air conditioner with Low/High settings, set it to Low when the room is already cool.",
+    "Use a thermos to store hot water instead of repeatedly boiling water with an electric kettle.",
   ];
 
   // State to store 3 random tips
