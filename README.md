@@ -18,6 +18,11 @@
 
 2. npm run dev -- --host (go to new_frontend folder)
 
+## update sqlite database 
+
+1. python manage.py makemigrations
+
+2. python manage.py migrate
 
 ## To do:
 1. Add badges icon to total points achievements
