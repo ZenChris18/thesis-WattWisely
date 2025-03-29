@@ -15,7 +15,7 @@ def get_challenges(request):
             "description": c.description,
             "requirement_kwh": c.requirement_kwh,
             "status": c.status,
-            "claimed": c.claimed,  # ✅ Include this!
+            "claimed": c.claimed, 
             "points": c.points,
             "date_completed": c.date_completed.strftime("%Y-%m-%d %H:%M:%S") if c.date_completed else None
         }
@@ -33,12 +33,12 @@ def complete_challenge(request):
             challenge_id = data.get("id")
 
             challenge = Challenge.objects.get(id=challenge_id)
-            if not challenge.status:  # Only mark if not already completed
+            if not challenge.status:
                 challenge.status = True
                 challenge.date_completed = datetime.now()
                 challenge.save()
 
-            # ✅ Return updated challenge data
+            # Return updated challenge data
             return JsonResponse({
                 "success": True,
                 "message": "Challenge updated successfully",
@@ -58,7 +58,6 @@ def complete_challenge(request):
 
 def get_weekly_challenges(request):
     try:
-        # ✅ Get all weekly challenges, no filtering by week_start/week_end
         challenges = WeeklyChallenge.objects.all().values(
             "id", "title", "description", "requirement_kwh", "points", "status", "claimed", "date_completed"
         )
@@ -92,3 +91,55 @@ def claim_challenge_points(request):
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
+@csrf_exempt
+def complete_weekly_challenge(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            challenge_id = data.get("id")
+
+            challenge = WeeklyChallenge.objects.get(id=challenge_id)
+            if not challenge.status:
+                challenge.status = True
+                challenge.date_completed = datetime.now()
+                challenge.save()
+
+            return JsonResponse({
+                "success": True,
+                "message": "Weekly challenge updated successfully",
+                "challenge": {
+                    "id": challenge.id,
+                    "status": challenge.status,
+                    "date_completed": challenge.date_completed.strftime("%Y-%m-%d %H:%M:%S")
+                }
+            })
+        except WeeklyChallenge.DoesNotExist:
+            return JsonResponse({"error": "Weekly challenge not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+@csrf_exempt
+def claim_weekly_challenge_points(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            challenge_id = data.get("challenge_id")
+
+            challenge = WeeklyChallenge.objects.get(id=challenge_id)
+
+            if challenge.claimed:
+                return JsonResponse({"success": False, "error": "Points already claimed"}, status=400)
+
+            challenge.claimed = True
+            challenge.save()
+
+            return JsonResponse({"success": True})
+
+        except WeeklyChallenge.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Weekly challenge not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
