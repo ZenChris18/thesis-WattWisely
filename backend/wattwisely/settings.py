@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'names',
     'challenges',
+    'achievements',
 ]
 
 MIDDLEWARE = [

@@ -11,7 +11,7 @@ function DashboardCardChallenges02({ showAll = false, onPointsClaimed }) {
     const loadChallenges = async () => {
       const challengeData = await fetchWeeklyChallenges();
     
-      // ✅ Ensure `claimed` is always either true or false
+      // Ensure `claimed` is always either true or false
       const fixedChallenges = challengeData.map(challenge => ({
         ...challenge,
         claimed: challenge.claimed || false, 
@@ -47,9 +47,9 @@ function DashboardCardChallenges02({ showAll = false, onPointsClaimed }) {
 
     const sortAndSetChallenges = (challengeList) => {
       const sortedChallenges = [...challengeList].sort((a, b) => {
-        if (a.claimed && !b.claimed) return 1; // ✅ Move claimed challenges down
+        if (a.claimed && !b.claimed) return 1; // Move claimed challenges down
         if (!a.claimed && b.claimed) return -1;
-        if (a.status && !b.status) return -1; // ✅ Move completed but unclaimed up
+        if (a.status && !b.status) return -1; // Move completed but unclaimed up
         if (!a.status && b.status) return 1;  
         return 0;
       });

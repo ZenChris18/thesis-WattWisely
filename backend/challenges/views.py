@@ -67,6 +67,8 @@ def get_weekly_challenges(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+from achievements.models import TotalPoints, Badge, UnlockedBadge
+
 @csrf_exempt
 def claim_challenge_points(request):
     if request.method == "POST":
@@ -79,10 +81,23 @@ def claim_challenge_points(request):
             if challenge.claimed:
                 return JsonResponse({"success": False, "error": "Points already claimed"}, status=400)
 
+            # Update claimed status
             challenge.claimed = True
             challenge.save()
 
-            return JsonResponse({"success": True})
+            # Update total points
+            total_points, _ = TotalPoints.objects.get_or_create(id=1)  # Assuming single row for now
+            total_points.points += challenge.points
+            total_points.save()
+
+            # Check if a new badge should be unlocked
+            unlocked_badges = []
+            for badge in Badge.objects.filter(threshold__lte=total_points.points):
+                if not UnlockedBadge.objects.filter(badge=badge).exists():
+                    UnlockedBadge.objects.create(badge=badge)
+                    unlocked_badges.append(badge.name)
+
+            return JsonResponse({"success": True, "new_badges": unlocked_badges})
 
         except Challenge.DoesNotExist:
             return JsonResponse({"success": False, "error": "Challenge not found"}, status=404)
@@ -90,6 +105,7 @@ def claim_challenge_points(request):
             return JsonResponse({"success": False, "error": str(e)}, status=500)
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
 
 @csrf_exempt
 def complete_weekly_challenge(request):
@@ -132,10 +148,23 @@ def claim_weekly_challenge_points(request):
             if challenge.claimed:
                 return JsonResponse({"success": False, "error": "Points already claimed"}, status=400)
 
+            # Update claimed status
             challenge.claimed = True
             challenge.save()
 
-            return JsonResponse({"success": True})
+            # Update total points
+            total_points, _ = TotalPoints.objects.get_or_create(id=1)  # Assuming a single row for now
+            total_points.points += challenge.points
+            total_points.save()
+
+            # Check if a new badge should be unlocked
+            unlocked_badges = []
+            for badge in Badge.objects.filter(threshold__lte=total_points.points):
+                if not UnlockedBadge.objects.filter(badge=badge).exists():
+                    UnlockedBadge.objects.create(badge=badge)
+                    unlocked_badges.append(badge.name)
+
+            return JsonResponse({"success": True, "new_badges": unlocked_badges})
 
         except WeeklyChallenge.DoesNotExist:
             return JsonResponse({"success": False, "error": "Weekly challenge not found"}, status=404)

@@ -55,6 +55,7 @@ export const updateApplianceName = async (id, newName) => {
   }
 };
 
+// Fetch daily challenges
 export const fetchChallenges = async () => {
   try {
     const response = await fetch(`http://${IP}:8000/challenges/?t=${new Date().getTime()}`);
@@ -65,8 +66,9 @@ export const fetchChallenges = async () => {
 
     return data.challenges.map((c) => ({
       ...c,
-      claimed: c.claimed || false, // ✅ Ensure `claimed` always exists
-      points: c.points || 0,       // ✅ Ensure `points` always has a value
+      claimed: c.claimed || false, // Ensure `claimed` is always defined
+      status: c.status || false,   // Ensure `status` is always defined
+      points: c.points || 0,       // Ensure `points` always has a value
     }));
   } catch (error) {
     console.error("Error fetching challenges:", error);
@@ -74,6 +76,7 @@ export const fetchChallenges = async () => {
   }
 };
 
+// Fetch weekly challenges
 export const fetchWeeklyChallenges = async () => {
   try {
     const response = await fetch(`http://${IP}:8000/challenges/weekly/`);
@@ -81,36 +84,66 @@ export const fetchWeeklyChallenges = async () => {
       throw new Error(`Failed to fetch weekly challenges. Status: ${response.status}`);
     }
     const data = await response.json();
-    return data.weekly_challenges || [];
+
+    return data.weekly_challenges.map((c) => ({
+      ...c,
+      claimed: c.claimed || false,
+      status: c.status || false,
+      points: c.points || 0,
+    }));
   } catch (error) {
     console.error("Error fetching weekly challenges:", error);
     return [];
   }
 };
 
-// ✅ Complete a challenge
+// Complete a daily challenge
 export const completeChallenge = async (challengeId) => {
   try {
     const response = await fetch(`http://${IP}:8000/challenges/complete/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: challengeId }),
+      body: JSON.stringify({ challenge_id: challengeId }),
     });
 
     const result = await response.json();
     console.log("Challenge Completion Response:", result);
 
-    if (!response.ok) {
-      throw new Error(`Failed to update challenge: ${result.error || "Unknown error"}`);
+    if (!response.ok || !result.success) {
+      throw new Error(`Failed to complete challenge: ${result.error || "Unknown error"}`);
     }
 
-    return result.success || false;  // Return true if successful, false otherwise
+    return true;
   } catch (error) {
     console.error("Error completing challenge:", error);
     return false;
   }
 };
 
+// Complete a weekly challenge
+export const completeWeeklyChallenge = async (challengeId) => {
+  try {
+    const response = await fetch(`http://${IP}:8000/challenges/weekly/complete/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ challenge_id: challengeId }),
+    });
+
+    const result = await response.json();
+    console.log("Weekly Challenge Completion Response:", result);
+
+    if (!response.ok || !result.success) {
+      throw new Error(`Failed to complete weekly challenge: ${result.error || "Unknown error"}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error completing weekly challenge:", error);
+    return false;
+  }
+};
+
+// Claim points for a daily challenge
 export const claimChallengePoints = async (challengeId) => {
   try {
     const response = await fetch(`http://${IP}:8000/challenges/claim-points/`, {
@@ -122,40 +155,17 @@ export const claimChallengePoints = async (challengeId) => {
     const data = await response.json();
     console.log("Challenge Claim Response:", data);
 
-    return data.success; // ✅ Ensure it returns success or failure
+    return data.success || false;
   } catch (error) {
     console.error("Error claiming challenge points:", error);
     return false;
   }
 };
 
-// ✅ Complete a weekly challenge
-export const completeWeeklyChallenge = async (challengeId) => {
-  try {
-    const response = await fetch(`http://${IP}:8000/challenges/weekly/complete/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: challengeId }),
-    });
-
-    const result = await response.json();
-    console.log("Weekly Challenge Completion Response:", result);
-
-    if (!response.ok) {
-      throw new Error(`Failed to complete weekly challenge: ${result.error || "Unknown error"}`);
-    }
-
-    return result.success || false;
-  } catch (error) {
-    console.error("Error completing weekly challenge:", error);
-    return false;
-  }
-};
-
-// ✅ Claim points for a weekly challenge
+// Claim points for a weekly challenge
 export const claimWeeklyChallengePoints = async (challengeId) => {
   try {
-    const response = await fetch(`http://${IP}:8000/challenges/weekly/claim-points/`, {
+    const response = await fetch(`http://${IP}:8000/challenges/weekly/claim-points`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challenge_id: challengeId }),
@@ -164,9 +174,24 @@ export const claimWeeklyChallengePoints = async (challengeId) => {
     const data = await response.json();
     console.log("Weekly Challenge Claim Response:", data);
 
-    return data.success; // ✅ Return success status
+    return data.success || false;
   } catch (error) {
     console.error("Error claiming weekly challenge points:", error);
     return false;
+  }
+};
+
+export const fetchTotalPoints = async () => {
+  try {
+    const response = await fetch(`http://${IP}:8000/achievements/total-points/`); 
+    if (!response.ok) {
+      throw new Error(`Failed to fetch total points. Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.total_points || 0; // Ensure it always returns a number
+  } catch (error) {
+    console.error("Error fetching total points:", error);
+    return 0; // Return 0 if there's an error
   }
 };
