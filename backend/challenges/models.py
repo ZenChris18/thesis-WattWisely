@@ -7,7 +7,7 @@ class Challenge(models.Model):
     status = models.BooleanField(default=False)  # Completed or not
     date_completed = models.DateTimeField(null=True, blank=True)
     points = models.IntegerField(default=1)  # Reward points
-    claimed = models.BooleanField(default=False)  # ✅ New field
+    claimed = models.BooleanField(default=False)  # New field
 
     def __str__(self):
         return self.title
@@ -20,7 +20,7 @@ class WeeklyChallenge(models.Model):
     status = models.BooleanField(default=False)  # Completed or not
     date_completed = models.DateTimeField(null=True, blank=True)
     points = models.IntegerField(default=3)  # Reward points
-    claimed = models.BooleanField(default=False)  # ✅ Match structure with Challenge
+    claimed = models.BooleanField(default=False)  # Match structure with Challenge
 
     def __str__(self):
         return self.title

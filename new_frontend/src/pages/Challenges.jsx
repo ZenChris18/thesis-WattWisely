@@ -3,7 +3,7 @@ import Header from "../partials/Header";
 import Sidebar from "../partials/Sidebar";
 import DashboardCardChallenges from "../partials/dashboard/DashboardCardChallenges";
 import DashboardCardChallenges02 from "../partials/dashboard/DashboardCardChallenges02";
-import { fetchChallenges, fetchWeeklyChallenges } from "../services/powerDataService";
+import { fetchTotalPoints } from "../services/powerDataService";
 
 function Challenges() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -11,22 +11,16 @@ function Challenges() {
 
   useEffect(() => {
     const loadPoints = async () => {
-      const dailyChallenges = await fetchChallenges();
-      const weeklyChallenges = await fetchWeeklyChallenges();
-
-      // Calculate total points (claimed only)
-      const claimedPoints = [...dailyChallenges, ...weeklyChallenges]
-        .filter((c) => c.claimed)
-        .reduce((sum, c) => sum + (c.points || 0), 0);
-
-      setTotalPoints(claimedPoints);
+      const points = await fetchTotalPoints(); 
+      setTotalPoints(points);
     };
 
     loadPoints();
   }, []);
 
-  const handlePointsClaimed = (points) => {
-    setTotalPoints((prevPoints) => prevPoints + points);
+  const handlePointsClaimed = async () => {
+    const points = await fetchTotalPoints(); // Refresh points after claiming challenge
+    setTotalPoints(points);
   };
 
   return (
@@ -43,7 +37,6 @@ function Challenges() {
               🌟 Watt Points: {totalPoints}
             </h2>
 
-            {/* Wrap challenges in a div with spacing */}
             <div className="space-y-6">
               {/* Daily Challenges */}
               <DashboardCardChallenges showAll={true} onPointsClaimed={handlePointsClaimed} />
