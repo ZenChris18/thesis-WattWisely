@@ -195,3 +195,16 @@ export const fetchTotalPoints = async () => {
     return 0; // Return 0 if there's an error
   }
 };
+
+// badges
+export const fetchUnlockedBadges = async () => {
+  try {
+    const response = await fetch(`http://${IP}:8000/achievements/unlocked-badges/`);
+    if (!response.ok) throw new Error("Failed to fetch unlocked badges");
+    const data = await response.json();
+    return data.unlocked_badges;
+  } catch (error) {
+    console.error("Error fetching unlocked badges:", error);
+    return [];
+  }
+};

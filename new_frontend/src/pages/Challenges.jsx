@@ -1,26 +1,36 @@
+// Import React
 import React, { useState, useEffect } from "react";
 import Header from "../partials/Header";
 import Sidebar from "../partials/Sidebar";
 import DashboardCardChallenges from "../partials/dashboard/DashboardCardChallenges";
 import DashboardCardChallenges02 from "../partials/dashboard/DashboardCardChallenges02";
-import { fetchTotalPoints } from "../services/powerDataService";
+import { fetchTotalPoints, fetchUnlockedBadges } from "../services/powerDataService";
+
+const badgeImagePath = "/images/WattBadges/";
 
 function Challenges() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [totalPoints, setTotalPoints] = useState(0);
+  const [badges, setBadges] = useState([]);
 
   useEffect(() => {
-    const loadPoints = async () => {
-      const points = await fetchTotalPoints(); 
+    const loadData = async () => {
+      const points = await fetchTotalPoints();
       setTotalPoints(points);
+
+      const fetchedBadges = await fetchUnlockedBadges();
+      setBadges(fetchedBadges);
     };
 
-    loadPoints();
+    loadData();
   }, []);
 
   const handlePointsClaimed = async () => {
-    const points = await fetchTotalPoints(); // Refresh points after claiming challenge
+    const points = await fetchTotalPoints();
     setTotalPoints(points);
+
+    const fetchedBadges = await fetchUnlockedBadges();
+    setBadges(fetchedBadges);
   };
 
   return (
@@ -37,11 +47,32 @@ function Challenges() {
               🌟 Watt Points: {totalPoints}
             </h2>
 
-            <div className="space-y-6">
-              {/* Daily Challenges */}
-              <DashboardCardChallenges showAll={true} onPointsClaimed={handlePointsClaimed} />
+            {/* Badges Section */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                🏅 Unlocked Badges
+              </h2>
+              <div className="flex gap-4 flex-wrap">
+                {badges.length > 0 ? (
+                  badges.map((badge) => (
+                    <div key={badge.id} className="flex flex-col items-center">
+                      <img
+                        src={`${badgeImagePath}${badge.badge__image}`}
+                        alt={badge.badge__name}
+                        className="w-16 h-16 object-contain"
+                      />
+                      <p className="text-sm text-gray-600 dark:text-gray-300">{badge.badge__name}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500">No badges unlocked yet.</p>
+                )}
+              </div>
+            </div>
 
-              {/* Weekly Challenges */}
+            {/* Challenges */}
+            <div className="space-y-6">
+              <DashboardCardChallenges showAll={true} onPointsClaimed={handlePointsClaimed} />
               <DashboardCardChallenges02 showAll={true} onPointsClaimed={handlePointsClaimed} />
             </div>
           </div>

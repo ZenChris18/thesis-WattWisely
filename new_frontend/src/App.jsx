@@ -8,7 +8,6 @@ import './charts/ChartjsConfig';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import Challenges from './pages/Challenges';
-import Achievements from './pages/Achievements';
 
 import StartScreen from './components/StartScreen';
 import LoadingScreen from './components/LoadingScreen';
@@ -47,7 +46,6 @@ function App() {
           <Route exact path="/" element={<Dashboard />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/challenges" element={<Challenges />} />
-          <Route path="/achievements" element={<Achievements />} />
         </Routes>
       )}
     </AnimatePresence>
@@ -69,7 +67,6 @@ import './charts/ChartjsConfig';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import Challenges from './pages/Challenges';
-import Achievements from './pages/Achievements';
 
 import StartScreen from './components/StartScreen';
 import LoadingScreen from './components/LoadingScreen';
@@ -105,7 +102,6 @@ function App() {
           <Route exact path="/" element={<Dashboard />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/challenges" element={<Challenges />} />
-          <Route path="/achievements" element={<Achievements />} />
         </Routes>
       )}
     </AnimatePresence>
