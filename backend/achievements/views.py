@@ -13,7 +13,7 @@ def get_total_points(request):
     total_points_obj.points = daily_points + weekly_points
     total_points_obj.save()
 
-    # 🏅 Check if any new badges should be unlocked
+    # Check if any new badges should be unlocked
     check_and_unlock_badges()
 
     return JsonResponse({"total_points": total_points_obj.points})
