@@ -10,7 +10,8 @@ def create_default_badges(sender, **kwargs):
         default_badges = [
             {"name": "Wattling", "threshold": 3, "image": "Wattling.png"},
             {"name": "Grand Master of Watts", "threshold": 25, "image": "Grand_Master_of_Watts.png"},
-
+            {"name": "Watt Master", "threshold": 10, "image": "Watt_Master.png"},
+            {"name": "May The Watts Be With You", "threshold": 50, "image": "May_The_Watts_Be_With_You.png"},
         ]
 
         for badge_data in default_badges:
