@@ -25,9 +25,25 @@ def get_badges(request):
 
 def get_unlocked_badges(request):
     unlocked = list(
-        UnlockedBadge.objects.values("id", "badge__name", "badge__image", "date_unlocked")
+        UnlockedBadge.objects.select_related('badge').values(
+            'badge__id', 
+            'badge__name', 
+            'badge__image', 
+            'date_unlocked'
+        )
     )
+    
+    unlocked = [
+        {
+            'id': badge['badge__id'],
+            'name': badge['badge__name'],
+            'image': badge['badge__image'],
+            'date_unlocked': badge['date_unlocked']
+        }
+        for badge in unlocked
+    ]
     return JsonResponse({"unlocked_badges": unlocked})
+
 
 def check_and_unlock_badges():
     total_points = TotalPoints.objects.get(id=1).points  # Get current points

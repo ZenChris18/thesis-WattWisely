@@ -196,15 +196,34 @@ export const fetchTotalPoints = async () => {
   }
 };
 
-// badges
+// get unlocked badges
 export const fetchUnlockedBadges = async () => {
   try {
     const response = await fetch(`http://${IP}:8000/achievements/unlocked-badges/`);
     if (!response.ok) throw new Error("Failed to fetch unlocked badges");
     const data = await response.json();
-    return data.unlocked_badges;
+
+    // No need to map, as the structure now matches directly
+    return data.unlocked_badges || [];
   } catch (error) {
     console.error("Error fetching unlocked badges:", error);
     return [];
+  }
+};
+
+
+
+// get all badges
+export const fetchBadges = async () => {
+  try {
+    const response = await fetch(`http://${IP}:8000/achievements/badges/`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch badges");
+    }
+    const data = await response.json();
+    return data.badges || []; // Return the badges list
+  } catch (error) {
+    console.error("Error fetching badges:", error);
+    return []; // Return an empty array in case of an error
   }
 };
