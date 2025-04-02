@@ -1,14 +1,14 @@
-//Real Code
 import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import './css/style.css';
 import './charts/ChartjsConfig';
 
+// import pages
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import Challenges from './pages/Challenges';
-import Achievements from './pages/Achievements';
+import Badges from './pages/Badges';
 
 import StartScreen from './components/StartScreen';
 import LoadingScreen from './components/LoadingScreen';
@@ -47,7 +47,7 @@ function App() {
           <Route exact path="/" element={<Dashboard />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/challenges" element={<Challenges />} />
-          <Route path="/achievements" element={<Achievements />} />
+          <Route path="/badges" element={<Badges />} />
         </Routes>
       )}
     </AnimatePresence>
@@ -69,7 +69,6 @@ import './charts/ChartjsConfig';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import Challenges from './pages/Challenges';
-import Achievements from './pages/Achievements';
 
 import StartScreen from './components/StartScreen';
 import LoadingScreen from './components/LoadingScreen';
@@ -105,7 +104,6 @@ function App() {
           <Route exact path="/" element={<Dashboard />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/challenges" element={<Challenges />} />
-          <Route path="/achievements" element={<Achievements />} />
         </Routes>
       )}
     </AnimatePresence>

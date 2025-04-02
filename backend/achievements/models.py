@@ -9,9 +9,11 @@ class TotalPoints(models.Model):
 class Badge(models.Model):
     name = models.CharField(max_length=255, unique=True)
     threshold = models.IntegerField()  # Points needed to unlock
+    image = models.CharField(max_length=255, blank=True, null=True)  # Allow empty image
 
     def __str__(self):
         return self.name
+
 
 class UnlockedBadge(models.Model):
     badge = models.ForeignKey(Badge, on_delete=models.CASCADE)

@@ -11,7 +11,7 @@ function Challenges() {
 
   useEffect(() => {
     const loadPoints = async () => {
-      const points = await fetchTotalPoints(); 
+      const points = await fetchTotalPoints();
       setTotalPoints(points);
     };
 
@@ -19,15 +19,17 @@ function Challenges() {
   }, []);
 
   const handlePointsClaimed = async () => {
-    const points = await fetchTotalPoints(); // Refresh points after claiming challenge
+    const points = await fetchTotalPoints();
     setTotalPoints(points);
   };
 
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
         <main className="grow">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold mb-6">
@@ -37,11 +39,9 @@ function Challenges() {
               🌟 Watt Points: {totalPoints}
             </h2>
 
+            {/* Challenges Section */}
             <div className="space-y-6">
-              {/* Daily Challenges */}
               <DashboardCardChallenges showAll={true} onPointsClaimed={handlePointsClaimed} />
-
-              {/* Weekly Challenges */}
               <DashboardCardChallenges02 showAll={true} onPointsClaimed={handlePointsClaimed} />
             </div>
           </div>
