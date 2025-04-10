@@ -1,27 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Header from "../partials/Header";
 import Sidebar from "../partials/Sidebar";
 import DashboardCardChallenges from "../partials/dashboard/DashboardCardChallenges";
 import DashboardCardChallenges02 from "../partials/dashboard/DashboardCardChallenges02";
-import { fetchTotalPoints } from "../services/powerDataService";
+import { usePoints } from "../contexts/PointsContext";
 
 function Challenges() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [totalPoints, setTotalPoints] = useState(0);
-
-  useEffect(() => {
-    const loadPoints = async () => {
-      const points = await fetchTotalPoints();
-      setTotalPoints(points);
-    };
-
-    loadPoints();
-  }, []);
-
-  const handlePointsClaimed = async () => {
-    const points = await fetchTotalPoints();
-    setTotalPoints(points);
-  };
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const { totalPoints, handlePointsClaimed } = usePoints();
 
   return (
     <div className="flex h-screen overflow-hidden">
