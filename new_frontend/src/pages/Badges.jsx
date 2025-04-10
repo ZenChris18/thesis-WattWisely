@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../partials/Sidebar";
 import Header from "../partials/Header";
-// Import the required API functions
 import { fetchBadges, fetchUnlockedBadges, fetchTotalPoints } from "../services/powerDataService";
 
 const badgeImagePath = "/images/WattBadges/";

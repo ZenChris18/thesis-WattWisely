@@ -3,12 +3,15 @@ import { NavLink, useLocation } from "react-router-dom";
 
 import SidebarLinkGroup from "./SidebarLinkGroup";
 import wattwiselyLogo from '../images/WattwiselyLogo.png';
+import { usePoints } from "../contexts/PointsContext"; 
 
 function Sidebar({
   sidebarOpen,
   setSidebarOpen,
   variant = 'default',
+  wattpoints,
 }) {
+  const { totalPoints } = usePoints();
   const location = useLocation();
   const { pathname } = location;
 
@@ -255,15 +258,24 @@ function Sidebar({
               */}
             </ul>
           </div>
-          {/* New Section */}
+          {/* Points Section */}
           <div>
             <h3 className="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
               <span className="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">
                 •••
               </span>
-              <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">Hello</span>
+              <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">Points</span>
             </h3>
             <ul className="mt-3">
+              <li className="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0">
+                <div className="block text-gray-800 dark:text-gray-100">
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                      Wattpoints: {totalPoints} {/* Display the total points */}
+                    </span>
+                  </div>
+                </div>
+              </li>
             </ul>
           </div>
         </div>
