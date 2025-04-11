@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../partials/Sidebar";
 import Header from "../partials/Header";
-import { fetchBadges, fetchUnlockedBadges, fetchTotalPoints } from "../services/powerDataService";
+import {
+  fetchBadges,
+  fetchUnlockedBadges,
+  fetchTotalPoints,
+} from "../services/powerDataService";
 import { motion } from "framer-motion";
+import { Dialog } from "@headlessui/react";
 
 const badgeImagePath = "/images/WattBadges/";
 
 function Badges() {
+  // existing states
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [badges, setBadges] = useState([]);
   const [unlockedBadges, setUnlockedBadges] = useState(new Set());
   const [unlockedDetails, setUnlockedDetails] = useState({});
   const [totalPoints, setTotalPoints] = useState(0);
   const [filter, setFilter] = useState("all");
+  const [newlyUnlocked, setNewlyUnlocked] = useState([]);
+
+  // modal state
+  const [selectedBadge, setSelectedBadge] = useState(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -32,8 +42,14 @@ function Badges() {
           details[b.id] = b.date_unlocked;
         });
         setUnlockedDetails(details);
+
+        const stored = localStorage.getItem("newUnlockedBadges");
+        if (stored) {
+          setNewlyUnlocked(JSON.parse(stored));
+          localStorage.removeItem("newUnlockedBadges");
+        }
       } catch (error) {
-        console.error("Error loading data:", error);
+        console.error("Error loading badge data:", error);
       }
     };
 
@@ -48,32 +64,37 @@ function Badges() {
 
   const renderBadgeCard = (badge, isUnlocked) => {
     const progress = Math.min((totalPoints / badge.threshold) * 100, 100);
+    const isNewlyUnlocked = isUnlocked && newlyUnlocked.includes(badge.id);
 
     return (
       <motion.div
         key={badge.id}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
+        whileHover={{ scale: 1.05 }}
         transition={{ duration: 0.3 }}
-        className={`flex flex-col items-center justify-start p-4 rounded-xl w-44 shadow-md ${
+        onClick={() => setSelectedBadge(badge)}
+        className={`cursor-pointer flex flex-col items-center justify-start p-4 rounded-2xl w-full max-w-[200px] shadow-lg ${
           isUnlocked
             ? "bg-white dark:bg-gray-800"
-            : "bg-gray-100 dark:bg-gray-700 opacity-70"
-        } hover:scale-105 transition-transform`}
+            : "bg-gray-100 dark:bg-gray-700 opacity-50"
+        } ${isNewlyUnlocked ? "ring-4 ring-yellow-400" : ""}`}
       >
-        <img
-          src={`${badgeImagePath}${badge.image}`}
+        <motion.img
+          src={`/images/WattBadges/${badge.image}`}
           alt={badge.name}
-          title={badge.name}
-          className="w-24 h-24 object-contain mb-2"
+          className={`w-28 h-28 object-contain mb-2 ${
+            isUnlocked ? "" : "grayscale opacity-50"
+          }`}
+          animate={isNewlyUnlocked ? { scale: [1, 1.2, 1] } : {}}
+          transition={{ duration: 0.6, repeat: 2 }}
         />
         <p className="text-sm text-center font-medium text-gray-800 dark:text-gray-100">
           {badge.name}
         </p>
-
         {isUnlocked ? (
           <div className="text-xs text-green-600 dark:text-green-400 mt-1">
-            ✅ Unlocked on {new Date(unlockedDetails[badge.id]).toLocaleDateString()}
+            ✅ {new Date(unlockedDetails[badge.id]).toLocaleDateString()}
           </div>
         ) : (
           <>
@@ -101,36 +122,82 @@ function Badges() {
         <main className="grow">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">
                 Badges
               </h1>
-              <div>
-                <select
-                  value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
-                  className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100"
-                >
-                  <option value="all">All</option>
-                  <option value="unlocked">Unlocked</option>
-                  <option value="locked">Locked</option>
-                </select>
-              </div>
+              <select
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100"
+              >
+                <option value="all">All</option>
+                <option value="unlocked">Unlocked</option>
+                <option value="locked">Locked</option>
+              </select>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            {/* Adjusted grid with larger gap */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
               {filteredBadges.length > 0 ? (
                 filteredBadges.map((badge) =>
                   renderBadgeCard(badge, unlockedBadges.has(badge.id))
                 )
               ) : (
                 <p className="text-sm text-gray-500 col-span-full">
-                  No badges available for this filter.
+                  No badges available.
                 </p>
               )}
             </div>
           </div>
         </main>
       </div>
+
+      {/* Badge Modal with improved dimming */}
+      {selectedBadge && (
+        <Dialog open={true} onClose={() => setSelectedBadge(null)} className="relative z-50">
+          {/* Overlay */}
+          <div
+        className="fixed inset-0"
+        style={{
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        }}
+        aria-hidden="true"
+          />
+        {/* Modal panel */}
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md mx-auto shadow-2xl text-center">
+            <Dialog.Title className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              {selectedBadge.name}
+            </Dialog.Title>
+            <img
+              src={`${badgeImagePath}${selectedBadge.image}`}
+              alt={selectedBadge.name}
+              className="w-32 h-32 object-contain mx-auto mb-4"
+            />
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+              {selectedBadge.description || "No description available."}
+            </p>
+            {unlockedBadges.has(selectedBadge.id) ? (
+              <p className="text-green-600 dark:text-green-400 text-sm">
+                ✅ Unlocked on{" "}
+                {new Date(unlockedDetails[selectedBadge.id]).toLocaleDateString()}
+              </p>
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                🔒 Requires {selectedBadge.threshold} points.
+              </p>
+            )}
+            <button
+              onClick={() => setSelectedBadge(null)}
+              className="mt-4 px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700"
+            >
+              Close
+            </button>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+    )}
+
     </div>
   );
 }
