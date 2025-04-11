@@ -4,6 +4,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import SidebarLinkGroup from "./SidebarLinkGroup";
 import wattwiselyLogo from '../images/WattwiselyLogo.png';
 import { usePoints } from "../contexts/PointsContext"; 
+import { fetchUnlockedBadges } from "../services/powerDataService";
 
 function Sidebar({
   sidebarOpen,
@@ -20,6 +21,18 @@ function Sidebar({
 
   const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
   const [sidebarExpanded, setSidebarExpanded] = useState(storedSidebarExpanded === null ? false : storedSidebarExpanded === "true");
+  
+  // count the badges
+  const [badgeCount, setBadgeCount] = useState(0);
+
+  useEffect(() => {
+    const getBadges = async () => {
+      const unlockedBadges = await fetchUnlockedBadges();
+      setBadgeCount(unlockedBadges.length);
+    };
+
+    getBadges();
+  }, []);
 
   // close on click outside
   useEffect(() => {
@@ -95,185 +108,119 @@ function Sidebar({
 
         {/* Links */}
         <div className="space-y-8">
-          {/* Pages group */}
-          <div>
-            <h3 className="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
-              <span className="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">
-                •••
-              </span>
-              <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">Pages</span>
-            </h3>
-            <ul className="mt-3">
-              {/* Dashboard */}
-              <li className={`pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-linear-to-r ${pathname === "/" || pathname.includes("dashboard") ? "from-violet-500/[0.12] dark:from-violet-500/[0.24] to-violet-500/[0.04]" : ""}`}>
-                <NavLink
-                  end
-                  to="/"
-                  className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
-                    pathname === "/" || pathname.includes("dashboard") ? "" : "hover:text-gray-900 dark:hover:text-white"
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <svg className={`shrink-0 fill-current ${pathname === "/" || pathname.includes("dashboard") ? "text-violet-500" : "text-gray-400 dark:text-gray-500"}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                      <path d="M5.936.278A7.983 7.983 0 0 1 8 0a8 8 0 1 1-8 8c0-.722.104-1.413.278-2.064a1 1 0 1 1 1.932.516A5.99 5.99 0 0 0 2 8a6 6 0 1 0 6-6c-.53 0-1.045.076-1.548.21A1 1 0 1 1 5.936.278Z" />
-                      <path d="M6.068 7.482A2.003 2.003 0 0 0 8 10a2 2 0 1 0-.518-3.932L3.707 2.293a1 1 0 0 0-1.414 1.414l3.775 3.775Z" />
-                    </svg>
-                    <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                      Dashboard
-                    </span>
-                  </div>
-                </NavLink>
-              </li>
-
-              {/* Analytics & Stats */}
-              <li className={`pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-linear-to-r ${pathname.includes("analytics") ? "from-violet-500/[0.12] dark:from-violet-500/[0.24] to-violet-500/[0.04]" : ""}`}>
-                <NavLink
-                  end
-                  to="/analytics"
-                  className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
-                    pathname.includes("analytics") ? "" : "hover:text-gray-900 dark:hover:text-white"
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <svg className={`shrink-0 fill-current ${pathname.includes("analytics") ? "text-violet-500" : "text-gray-400 dark:text-gray-500"}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                      <path d="M1 14h2V2H1v12Zm4 0h2V6H5v8Zm4 0h2V9H9v5Zm4 0h2V4h-2v10Z" />
-                    </svg>
-                    <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                      Analytics & Stats
-                    </span>
-                  </div>
-                </NavLink>
-              </li>
-              {/* Challenges */}
-              <li className={`pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-linear-to-r ${pathname.includes("challenges") ? "from-violet-500/[0.12] dark:from-violet-500/[0.24] to-violet-500/[0.04]" : ""}`}>
-                <NavLink
-                  end
-                  to="/challenges"  
-                  className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
-                    pathname.includes("challenges") ? "" : "hover:text-gray-900 dark:hover:text-white"
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <svg className={`shrink-0 fill-current ${pathname.includes("challenges") ? "text-violet-500" : "text-gray-400 dark:text-gray-500"}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                      <path d="M6.753 2.659a1 1 0 0 0-1.506-1.317L2.451 4.537l-.744-.744A1 1 0 1 0 .293 5.207l1.5 1.5a1 1 0 0 0 1.46-.048l3.5-4ZM6.753 10.659a1 1 0 1 0-1.506-1.317l-2.796 3.195-.744-.744a1 1 0 0 0-1.414 1.414l1.5 1.5a1 1 0 0 0 1.46-.049l3.5-4ZM8 4.5a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1ZM9 11.5a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9Z" />
-                    </svg>
-                    <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                      Challenges
-                    </span>
-                  </div>
-                </NavLink>
-              </li>
-              {/* badges or profile tab */}
-              <li className={`pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-linear-to-r ${pathname.includes("badges") ? "from-violet-500/[0.12] dark:from-violet-500/[0.24] to-violet-500/[0.04]" : ""}`}>
-                <NavLink
-                  end
-                  to="/badges"  
-                  className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
-                    pathname.includes("badges") ? "" : "hover:text-gray-900 dark:hover:text-white"
-                  }`}
-                >
-                  <div className="flex items-center">
-                  <svg 
-                className={`shrink-0 fill-current ${pathname.includes("badges") ? "text-violet-500" : "text-gray-400 dark:text-gray-500"}`} 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="16" height="16" 
-                viewBox="0 0 16 16"
+        {/* Pages group */}
+        <div>
+          <h3 className="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
+            <span className="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">
+              •••
+            </span>
+            <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">Pages</span>
+          </h3>
+          <ul className="mt-3">
+            {/* Dashboard */}
+            <li className={`pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-linear-to-r ${pathname === "/" || pathname.includes("dashboard") ? "from-blue-300/[0.12] dark:from-blue-300/[0.24] to-blue-300/[0.04]" : "hover:bg-blue-500/[0.1] dark:hover:bg-blue-500/[0.1]"}`}>
+              <NavLink
+                end
+                to="/"
+                className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${pathname === "/" || pathname.includes("dashboard") ? "" : "hover:text-gray-900 dark:hover:text-white"}`}
               >
-                <path d="M8 0a4 4 0 0 1 4 4c0 1.282-.603 2.419-1.528 3.15l1.172 4.688a.5.5 0 0 1-.716.552L8 11.8l-2.928.59a.5.5 0 0 1-.716-.552l1.172-4.688A3.996 3.996 0 0 1 4 4a4 4 0 0 1 4-4Zm0 1a3 3 0 0 0-3 3c0 1.162.66 2.183 1.625 2.712a.5.5 0 0 1 .225.535l-.91 3.642 2.06-.414a.5.5 0 0 1 .197 0l2.06.414-.91-3.642a.5.5 0 0 1 .225-.535A3 3 0 0 0 11 4a3 3 0 0 0-3-3Zm-1 5.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z"/>
-              </svg>
+                <div className="flex items-center">
+                  <svg className={`shrink-0 fill-current ${pathname === "/" || pathname.includes("dashboard") ? "text-blue-500" : "text-gray-400 dark:text-gray-500"}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                    <path d="M5.936.278A7.983 7.983 0 0 1 8 0a8 8 0 1 1-8 8c0-.722.104-1.413.278-2.064a1 1 0 1 1 1.932.516A5.99 5.99 0 0 0 2 8a6 6 0 1 0 6-6c-.53 0-1.045.076-1.548.21A1 1 0 1 1 5.936.278Z" />
+                    <path d="M6.068 7.482A2.003 2.003 0 0 0 8 10a2 2 0 1 0-.518-3.932L3.707 2.293a1 1 0 0 0-1.414 1.414l3.775 3.775Z" />
+                  </svg>
+                  <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                    Dashboard
+                  </span>
+                </div>
+              </NavLink>
+            </li>
 
-                    <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                      Badges
-                    </span>
-                  </div>
-                </NavLink>
-              </li>
-              {/* Settings 
-              <SidebarLinkGroup activecondition={pathname.includes("settings")}>
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <a
-                        href="#0"
-                        className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
-                          pathname.includes("settings") ? "" : "hover:text-gray-900 dark:hover:text-white"
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleClick();
-                          setSidebarExpanded(true);
-                        }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <svg className={`shrink-0 fill-current ${pathname.includes('settings') ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                              <path d="M10.5 1a3.502 3.502 0 0 1 3.355 2.5H15a1 1 0 1 1 0 2h-1.145a3.502 3.502 0 0 1-6.71 0H1a1 1 0 0 1 0-2h6.145A3.502 3.502 0 0 1 10.5 1ZM9 4.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM5.5 9a3.502 3.502 0 0 1 3.355 2.5H15a1 1 0 1 1 0 2H8.855a3.502 3.502 0 0 1-6.71 0H1a1 1 0 1 1 0-2h1.145A3.502 3.502 0 0 1 5.5 9ZM4 12.5a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0Z" fillRule="evenodd" />
-                            </svg>
-                            <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                              Settings
-                            </span>
-                          </div>
-                          // icon
-                          <div className="flex shrink-0 ml-2">
-                            <svg className={`w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 ${open && "rotate-180"}`} viewBox="0 0 12 12">
-                              <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                            </svg>
-                          </div>
-                        </div>
-                      </a>
-                      <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                        <ul className={`pl-8 mt-1 ${!open && "hidden"}`}>
-                          <li className="mb-1 last:mb-0">
-                            <NavLink
-                              end
-                              to="*"
-                              className={({ isActive }) =>
-                                "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
-                              }
-                            >
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                My Account
-                              </span>
-                            </NavLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <NavLink
-                              end
-                              to="*"
-                              className={({ isActive }) =>
-                                "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
-                              }
-                            >
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                My Notifications
-                              </span>
-                            </NavLink>
-                          </li>
-                        </ul>
-                      </div>
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup>
-              */}
-            </ul>
-          </div>
+            {/* Analytics & Stats */}
+            <li className={`pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-linear-to-r ${pathname.includes("analytics") ? "from-green-300/[0.12] dark:from-green-300/[0.24] to-green-300/[0.04]" : "hover:bg-green-500/[0.1] dark:hover:bg-green-500/[0.1]"}`}>
+              <NavLink
+                end
+                to="/analytics"
+                className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${pathname.includes("analytics") ? "" : "hover:text-gray-900 dark:hover:text-white"}`}
+              >
+                <div className="flex items-center">
+                  <svg className={`shrink-0 fill-current ${pathname.includes("analytics") ? "text-green-500" : "text-gray-400 dark:text-gray-500"}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                    <path d="M1 14h2V2H1v12Zm4 0h2V6H5v8Zm4 0h2V9H9v5Zm4 0h2V4h-2v10Z" />
+                  </svg>
+                  <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                    Analytics & Stats
+                  </span>
+                </div>
+              </NavLink>
+            </li>
+
+            {/* Challenges */}
+            <li className={`pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-linear-to-r ${pathname.includes("challenges") ? "from-yellow-300/[0.12] dark:from-yellow-300/[0.24] to-yellow-300/[0.04]" : "hover:bg-yellow-500/[0.1] dark:hover:bg-yellow-500/[0.1]"}`}>
+              <NavLink
+                end
+                to="/challenges"
+                className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${pathname.includes("challenges") ? "" : "hover:text-gray-900 dark:hover:text-white"}`}
+              >
+                <div className="flex items-center">
+                  <svg className={`shrink-0 fill-current ${pathname.includes("challenges") ? "text-yellow-500" : "text-gray-400 dark:text-gray-500"}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                    <path d="M6.753 2.659a1 1 0 0 0-1.506-1.317L2.451 4.537l-.744-.744A1 1 0 1 0 .293 5.207l1.5 1.5a1 1 0 0 0 1.46-.048l3.5-4ZM6.753 10.659a1 1 0 1 0-1.506-1.317l-2.796 3.195-.744-.744a1 1 0 0 0-1.414 1.414l1.5 1.5a1 1 0 0 0 1.46-.049l3.5-4ZM8 4.5a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1ZM9 11.5a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9Z" />
+                  </svg>
+                  <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                    Challenges
+                  </span>
+                </div>
+              </NavLink>
+            </li>
+
+            {/* Badges */}
+            <li className={`pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-linear-to-r ${pathname.includes("badges") ? "from-pink-300/[0.12] dark:from-pink-300/[0.24] to-pink-300/[0.04]" : "hover:bg-pink-500/[0.1] dark:hover:bg-pink-500/[0.1]"}`}>
+              <NavLink
+                end
+                to="/badges"
+                className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${pathname.includes("badges") ? "" : "hover:text-gray-900 dark:hover:text-white"}`}
+              >
+                <div className="flex items-center">
+                  <svg className={`shrink-0 fill-current ${pathname.includes("badges") ? "text-pink-500" : "text-gray-400 dark:text-gray-500"}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                    <path d="M8 0a4 4 0 0 1 4 4c0 1.282-.603 2.419-1.528 3.15l1.172 4.688a.5.5 0 0 1-.716.552L8 11.8l-2.928.59a.5.5 0 0 1-.716-.552l1.172-4.688A3.996 3.996 0 0 1 4 4a4 4 0 0 1 4-4Zm0 1a3 3 0 0 0-3 3c0 1.162.66 2.183 1.625 2.712a.5.5 0 0 1 .225.535l-.91 3.642 2.06-.414a.5.5 0 0 1 .197 0l2.06.414-.91-3.642a.5.5 0 0 1 .225-.535A3 3 0 0 0 11 4a3 3 0 0 0-3-3Zm-1 5.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z" />
+                  </svg>
+                  <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                    Badges
+                  </span>
+                </div>
+              </NavLink>
+            </li>
+          </ul>
+        </div>
           {/* Points Section */}
           <div>
             <h3 className="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
               <span className="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">
                 •••
               </span>
-              <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">Points</span>
+              <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">Achievements</span>
             </h3>
             <ul className="mt-3">
-              <li className="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0">
-                <div className="block text-gray-800 dark:text-gray-100">
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                      Wattpoints: {totalPoints} {/* Display the total points */}
-                    </span>
-                  </div>
+              {/* Wattpoints */}
+              <li className="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150">
+                <div className="flex items-center text-gray-800 dark:text-gray-100">
+                  <svg className="shrink-0 fill-current text-yellow-500" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                    <path d="M7.5 1L1 9h5l-1 6 7-8H7l.5-6z" />
+                  </svg>
+                  <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                    Wattpoints: {totalPoints}
+                  </span>
+                </div>
+              </li>
+
+              {/* Badges */}
+              <li className="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150">
+                <div className="flex items-center text-gray-800 dark:text-gray-100">
+                  <svg className="shrink-0 fill-current text-indigo-500" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                    <path d="M8 0a4 4 0 0 1 4 4c0 1.282-.603 2.419-1.528 3.15l1.172 4.688a.5.5 0 0 1-.716.552L8 11.8l-2.928.59a.5.5 0 0 1-.716-.552l1.172-4.688A3.996 3.996 0 0 1 4 4a4 4 0 0 1 4-4Z" />
+                  </svg>
+                  <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                    Badges: {badgeCount}
+                  </span>
                 </div>
               </li>
             </ul>
