@@ -7,12 +7,21 @@ class TotalPoints(models.Model):
         return f"Total Points: {self.points}"
 
 class Badge(models.Model):
+    DIFFICULTY_CHOICES = [
+        ('padawatt', 'Padawatt'),       # Easy
+        ('wattknight', 'Watt Knight'),  # Medium
+        ('wattmaster', 'Watt Master'),  # Hard
+        ('wattlord', 'Watt Lord'),      # Legendary
+    ]
+
     name = models.CharField(max_length=255, unique=True)
     threshold = models.IntegerField()  # Points needed to unlock
-    image = models.CharField(max_length=255, blank=True, null=True)  # Allow empty image
+    image = models.CharField(max_length=255, blank=True, null=True)
+    difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES, default='padawatt')
 
     def __str__(self):
         return self.name
+
 
 
 class UnlockedBadge(models.Model):

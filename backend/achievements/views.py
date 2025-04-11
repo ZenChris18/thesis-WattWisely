@@ -20,7 +20,7 @@ def get_total_points(request):
 
 
 def get_badges(request):
-    badges = list(Badge.objects.values("id", "name", "threshold", "image"))
+    badges = list(Badge.objects.values("id", "name", "threshold", "image", "difficulty"))
     return JsonResponse({"badges": badges})
 
 def get_unlocked_badges(request):

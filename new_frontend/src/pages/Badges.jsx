@@ -65,7 +65,19 @@ function Badges() {
   const renderBadgeCard = (badge, isUnlocked) => {
     const progress = Math.min((totalPoints / badge.threshold) * 100, 100);
     const isNewlyUnlocked = isUnlocked && newlyUnlocked.includes(badge.id);
-
+  
+    const difficultyClass = isUnlocked
+      ? badge.difficulty === "padawatt"
+        ? "border-animate-easy"
+        : badge.difficulty === "wattknight"
+        ? "border-animate-medium"
+        : badge.difficulty === "wattmaster"
+        ? "border-animate-hard"
+        : badge.difficulty === "wattlord"
+        ? "border-animate-legendary"
+        : ""
+      : "";
+  
     return (
       <motion.div
         key={badge.id}
@@ -74,18 +86,16 @@ function Badges() {
         whileHover={{ scale: 1.05 }}
         transition={{ duration: 0.3 }}
         onClick={() => setSelectedBadge(badge)}
-        className={`cursor-pointer flex flex-col items-center justify-start p-4 rounded-2xl w-full max-w-[200px] shadow-lg ${
-          isUnlocked
-            ? "bg-white dark:bg-gray-800"
-            : "bg-gray-100 dark:bg-gray-700 opacity-50"
-        } ${isNewlyUnlocked ? "ring-4 ring-yellow-400" : ""}`}
+        className={`relative cursor-pointer flex flex-col items-center justify-start p-4 rounded-2xl w-full max-w-[200px] shadow-lg
+          ${isUnlocked ? "bg-white dark:bg-gray-800" : "bg-gray-100 dark:bg-gray-700 opacity-50"}
+          ${isNewlyUnlocked ? "ring-4 ring-yellow-400 sunray-shine" : ""}
+          ${difficultyClass}
+        `}
       >
         <motion.img
           src={`/images/WattBadges/${badge.image}`}
           alt={badge.name}
-          className={`w-28 h-28 object-contain mb-2 ${
-            isUnlocked ? "" : "grayscale opacity-50"
-          }`}
+          className={`relative z-10 w-28 h-28 object-contain mb-2 ${isUnlocked ? "" : "grayscale opacity-50"}`}
           animate={isNewlyUnlocked ? { scale: [1, 1.2, 1] } : {}}
           transition={{ duration: 0.6, repeat: 2 }}
         />
@@ -102,10 +112,7 @@ function Badges() {
               🔒 {badge.threshold} pts
             </div>
             <div className="w-full bg-gray-300 dark:bg-gray-600 h-2 rounded-full overflow-hidden">
-              <div
-                className="bg-indigo-500 h-2"
-                style={{ width: `${progress}%` }}
-              ></div>
+              <div className="bg-indigo-500 h-2" style={{ width: `${progress}%` }}></div>
             </div>
           </>
         )}
@@ -123,7 +130,7 @@ function Badges() {
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">
-                Badges
+                My Badges
               </h1>
               <select
                 value={filter}
