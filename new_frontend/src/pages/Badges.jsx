@@ -8,11 +8,39 @@ import {
 } from "../services/powerDataService";
 import { motion } from "framer-motion";
 import { Dialog } from "@headlessui/react";
+import Particles from "@tsparticles/react";
+import { loadFirePreset } from "@tsparticles/preset-fire";
+import { loadStarsPreset } from "@tsparticles/preset-stars";
 
 const badgeImagePath = "/images/WattBadges/";
 
+function MagicParticles({ id, difficulty }) {
+  useEffect(() => {
+    loadFirePreset(window.tsParticles);
+    loadStarsPreset(window.tsParticles);
+  }, []);
+
+  const optionsMap = {
+    wattmaster: {
+      preset: "fire",
+      fullScreen: { enable: false },
+    },
+    wattlord: {
+      preset: "stars",
+      fullScreen: { enable: false },
+    },
+  };
+
+  return (
+    <Particles
+      id={id}
+      options={optionsMap[difficulty]}
+      style={{ position: "absolute", width: "100%", height: "100%" }}
+    />
+  );
+}
+
 function Badges() {
-  // existing states
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [badges, setBadges] = useState([]);
   const [unlockedBadges, setUnlockedBadges] = useState(new Set());
@@ -20,8 +48,6 @@ function Badges() {
   const [totalPoints, setTotalPoints] = useState(0);
   const [filter, setFilter] = useState("all");
   const [newlyUnlocked, setNewlyUnlocked] = useState([]);
-
-  // modal state
   const [selectedBadge, setSelectedBadge] = useState(null);
 
   useEffect(() => {
@@ -65,7 +91,7 @@ function Badges() {
   const renderBadgeCard = (badge, isUnlocked) => {
     const progress = Math.min((totalPoints / badge.threshold) * 100, 100);
     const isNewlyUnlocked = isUnlocked && newlyUnlocked.includes(badge.id);
-  
+
     const difficultyClass = isUnlocked
       ? badge.difficulty === "padawatt"
         ? "border-animate-easy"
@@ -77,7 +103,7 @@ function Badges() {
         ? "border-animate-legendary"
         : ""
       : "";
-  
+
     return (
       <motion.div
         key={badge.id}
@@ -92,10 +118,19 @@ function Badges() {
           ${difficultyClass}
         `}
       >
+        {isUnlocked &&
+          (badge.difficulty === "wattmaster" || badge.difficulty === "wattlord") && (
+            <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
+              <MagicParticles id={`badge-particles-${badge.id}`} difficulty={badge.difficulty} />
+            </div>
+          )}
+
         <motion.img
           src={`/images/WattBadges/${badge.image}`}
           alt={badge.name}
-          className={`relative z-10 w-28 h-28 object-contain mb-2 ${isUnlocked ? "" : "grayscale opacity-50"}`}
+          className={`relative z-10 w-28 h-28 object-contain mb-2 ${
+            isUnlocked ? "" : "grayscale opacity-50"
+          }`}
           animate={isNewlyUnlocked ? { scale: [1, 1.2, 1] } : {}}
           transition={{ duration: 0.6, repeat: 2 }}
         />
@@ -112,7 +147,10 @@ function Badges() {
               🔒 {badge.threshold} pts
             </div>
             <div className="w-full bg-gray-300 dark:bg-gray-600 h-2 rounded-full overflow-hidden">
-              <div className="bg-indigo-500 h-2" style={{ width: `${progress}%` }}></div>
+              <div
+                className="bg-indigo-500 h-2"
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
           </>
         )}
@@ -130,7 +168,7 @@ function Badges() {
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">
-                My Badges
+                Badges
               </h1>
               <select
                 value={filter}
@@ -143,7 +181,6 @@ function Badges() {
               </select>
             </div>
 
-            {/* Adjusted grid with larger gap */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
               {filteredBadges.length > 0 ? (
                 filteredBadges.map((badge) =>
@@ -179,7 +216,7 @@ function Badges() {
             <img
               src={`${badgeImagePath}${selectedBadge.image}`}
               alt={selectedBadge.name}
-              className="w-32 h-32 object-contain mx-auto mb-4"
+              className="w-64 h-64 object-contain mx-auto mb-4"
             />
             <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
               {selectedBadge.description || "No description available."}
@@ -204,7 +241,6 @@ function Badges() {
         </div>
       </Dialog>
     )}
-
     </div>
   );
 }
