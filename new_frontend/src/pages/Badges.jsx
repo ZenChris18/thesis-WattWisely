@@ -8,37 +8,9 @@ import {
 } from "../services/powerDataService";
 import { motion } from "framer-motion";
 import { Dialog } from "@headlessui/react";
-import Particles from "@tsparticles/react";
-import { loadFirePreset } from "@tsparticles/preset-fire";
-import { loadStarsPreset } from "@tsparticles/preset-stars";
 
 const badgeImagePath = "/images/WattBadges/";
 
-function MagicParticles({ id, difficulty }) {
-  useEffect(() => {
-    loadFirePreset(window.tsParticles);
-    loadStarsPreset(window.tsParticles);
-  }, []);
-
-  const optionsMap = {
-    wattmaster: {
-      preset: "fire",
-      fullScreen: { enable: false },
-    },
-    wattlord: {
-      preset: "stars",
-      fullScreen: { enable: false },
-    },
-  };
-
-  return (
-    <Particles
-      id={id}
-      options={optionsMap[difficulty]}
-      style={{ position: "absolute", width: "100%", height: "100%" }}
-    />
-  );
-}
 
 function Badges() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -118,13 +90,6 @@ function Badges() {
           ${difficultyClass}
         `}
       >
-        {isUnlocked &&
-          (badge.difficulty === "wattmaster" || badge.difficulty === "wattlord") && (
-            <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-              <MagicParticles id={`badge-particles-${badge.id}`} difficulty={badge.difficulty} />
-            </div>
-          )}
-
         <motion.img
           src={`/images/WattBadges/${badge.image}`}
           alt={badge.name}
