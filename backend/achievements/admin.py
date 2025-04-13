@@ -3,8 +3,8 @@ from .models import Badge, UnlockedBadge, TotalPoints
 
 @admin.register(Badge)
 class BadgeAdmin(admin.ModelAdmin):
-    list_display = ("name", "threshold", "image")
-    search_fields = ("name",)
+    list_display = ("name", "threshold", "difficulty", "image")
+    search_fields = ("name", "difficulty") 
 
 @admin.register(UnlockedBadge)
 class UnlockedBadgeAdmin(admin.ModelAdmin):
@@ -14,4 +14,3 @@ class UnlockedBadgeAdmin(admin.ModelAdmin):
 @admin.register(TotalPoints)
 class TotalPointsAdmin(admin.ModelAdmin):
     list_display = ("points",)
-

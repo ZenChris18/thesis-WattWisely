@@ -165,7 +165,7 @@ export const claimChallengePoints = async (challengeId) => {
 // Claim points for a weekly challenge
 export const claimWeeklyChallengePoints = async (challengeId) => {
   try {
-    const response = await fetch(`http://${IP}:8000/challenges/weekly/claim-points`, {
+    const response = await fetch(`http://${IP}:8000/challenges/weekly/claim-points/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challenge_id: challengeId }),

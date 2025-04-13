@@ -4,7 +4,7 @@ import { AnimatePresence } from 'framer-motion';
 import './css/style.css';
 import './charts/ChartjsConfig';
 
-// import pages
+// Import pages
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import Challenges from './pages/Challenges';
@@ -12,6 +12,9 @@ import Badges from './pages/Badges';
 
 import StartScreen from './components/StartScreen';
 import LoadingScreen from './components/LoadingScreen';
+
+// Import PointsProvider
+import { PointsProvider } from './contexts/PointsContext'; // Import the PointsProvider
 
 function App() {
   const [showStartScreen, setShowStartScreen] = useState(() => {
@@ -37,24 +40,27 @@ function App() {
   };
 
   return (
-    <AnimatePresence mode="wait">
-      {showStartScreen && <StartScreen onFinish={handleStartScreenFinish} />}
-      {showLoadingScreen && <LoadingScreen />}
-      {!appReady && null}
+    <PointsProvider> {/* Wrap the app with PointsProvider */}
+      <AnimatePresence mode="wait">
+        {showStartScreen && <StartScreen onFinish={handleStartScreenFinish} />}
+        {showLoadingScreen && <LoadingScreen />}
+        {!appReady && null}
 
-      {appReady && (
-        <Routes>
-          <Route exact path="/" element={<Dashboard />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/challenges" element={<Challenges />} />
-          <Route path="/badges" element={<Badges />} />
-        </Routes>
-      )}
-    </AnimatePresence>
+        {appReady && (
+          <Routes>
+            <Route exact path="/" element={<Dashboard />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/challenges" element={<Challenges />} />
+            <Route path="/badges" element={<Badges />} />
+          </Routes>
+        )}
+      </AnimatePresence>
+    </PointsProvider>
   );
 }
 
 export default App;
+
 
 
 

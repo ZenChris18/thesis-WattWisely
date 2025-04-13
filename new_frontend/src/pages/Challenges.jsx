@@ -1,27 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Header from "../partials/Header";
 import Sidebar from "../partials/Sidebar";
 import DashboardCardChallenges from "../partials/dashboard/DashboardCardChallenges";
 import DashboardCardChallenges02 from "../partials/dashboard/DashboardCardChallenges02";
-import { fetchTotalPoints } from "../services/powerDataService";
+import { usePoints } from "../contexts/PointsContext";
+
+import { fetchUnlockedBadges } from "../services/powerDataService";
 
 function Challenges() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [totalPoints, setTotalPoints] = useState(0);
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const { totalPoints, handlePointsClaimed } = usePoints();
+  // this is to keep track of the unlocked badges for animation in badges page
+  const prevUnlockedRef = React.useRef([]);
 
-  useEffect(() => {
-    const loadPoints = async () => {
-      const points = await fetchTotalPoints();
-      setTotalPoints(points);
+  React.useEffect(() => {
+    const loadInitialUnlockedBadges = async () => {
+      try {
+        const unlocked = await fetchUnlockedBadges();
+        prevUnlockedRef.current = unlocked.map((b) => b.id);
+      } catch (err) {
+        console.error("Failed to fetch initial badges", err);
+      }
     };
-
-    loadPoints();
+    loadInitialUnlockedBadges();
   }, []);
 
-  const handlePointsClaimed = async () => {
-    const points = await fetchTotalPoints();
-    setTotalPoints(points);
-  };
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -41,8 +44,49 @@ function Challenges() {
 
             {/* Challenges Section */}
             <div className="space-y-6">
-              <DashboardCardChallenges showAll={true} onPointsClaimed={handlePointsClaimed} />
-              <DashboardCardChallenges02 showAll={true} onPointsClaimed={handlePointsClaimed} />
+              <DashboardCardChallenges
+                showAll={true}
+                onPointsClaimed={async () => {
+                  await handlePointsClaimed();
+
+                  try {
+                    const newUnlocked = await fetchUnlockedBadges();
+                    const newIds = newUnlocked.map((b) => b.id);
+
+                    const previousIds = prevUnlockedRef.current;
+                    const newlyUnlocked = newIds.filter((id) => !previousIds.includes(id));
+
+                    if (newlyUnlocked.length > 0) {
+                      localStorage.setItem("newUnlockedBadges", JSON.stringify(newlyUnlocked));
+                      prevUnlockedRef.current = newIds; // Update ref
+                    }
+                  } catch (err) {
+                    console.error("Error checking new badge unlocks:", err);
+                  }
+                }}
+              />
+
+              <DashboardCardChallenges02
+                showAll={true}
+                onPointsClaimed={async () => {
+                  await handlePointsClaimed();
+
+                  try {
+                    const newUnlocked = await fetchUnlockedBadges();
+                    const newIds = newUnlocked.map((b) => b.id);
+
+                    const previousIds = prevUnlockedRef.current;
+                    const newlyUnlocked = newIds.filter((id) => !previousIds.includes(id));
+
+                    if (newlyUnlocked.length > 0) {
+                      localStorage.setItem("newUnlockedBadges", JSON.stringify(newlyUnlocked));
+                      prevUnlockedRef.current = newIds;
+                    }
+                  } catch (err) {
+                    console.error("Error checking new badge unlocks:", err);
+                  }
+                }}
+              />
             </div>
           </div>
         </main>

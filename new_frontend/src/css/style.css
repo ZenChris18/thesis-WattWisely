@@ -6,6 +6,188 @@
 body{
   font-family: 'Pixelify Sans', sans-serif;
 }
+/* this is for animation in badges*/
+@keyframes sunray-spin {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 0.6;
+  }
+}
+
+.sunray-shine::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle, rgba(255, 223, 0, 0.2) 40%, transparent 80%);
+  border-radius: 50%;
+  animation: sunray-spin 4s linear infinite;
+  z-index: 0;
+}
+/* Animation for Padawatt (Easy) */
+.border-animate-easy {
+  border: 2px solid green;
+  animation: borderEase 1s ease-in-out; /* Animation for scaling */
+  box-shadow: 0 0 5px green, 0 0 10px yellow, 0 0 15px orange, 0 0 20px red;
+  position: relative;
+  animation: flicker-easy 0.5s infinite alternate; /* Reduced flicker speed */
+}
+
+/* Animation for Watt Knight (Medium) */
+.border-animate-medium {
+  border: 2px solid blue;
+  animation: borderEase 1s ease-in-out; /* Animation for scaling */
+  box-shadow: 0 0 5px blue, 0 0 10px lightblue, 0 0 15px cyan;
+  position: relative;
+  animation: flicker-medium 0.5s infinite alternate; /* Reduced flicker speed */
+}
+
+/* Animation for Watt Master (Hard) */
+.border-animate-hard {
+  border: 2px solid red;
+  animation: borderEase 1s ease-in-out; /* Animation for scaling */
+  box-shadow: 0 0 5px red, 0 0 10px orange, 0 0 15px firebrick, 0 0 20px darkred;
+  position: relative;
+  animation: flicker-hard 0.5s infinite alternate; /* Reduced flicker speed */
+}
+
+/* Animation for Watt Lord (Legendary) */
+.border-animate-legendary {
+  border: 2px solid purple;
+  animation: borderEase 1s ease-in-out; /* Animation for scaling */
+  box-shadow: 0 0 5px purple, 0 0 10px violet, 0 0 15px indigo, 0 0 20px blue;
+  position: relative;
+  animation: flicker-legendary 0.5s infinite alternate; /* Reduced flicker speed */
+}
+
+/* Keyframe for border animation */
+@keyframes borderEase {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Flicker effect keyframes */
+@keyframes flicker-easy {
+  0% {
+    box-shadow: 0 0 5px green, 0 0 10px green, 0 0 15px green, 0 0 20px yellowgreen;
+  }
+  50% {
+    box-shadow: 0 0 10px green, 0 0 15px green, 0 0 20px green, 0 0 25px yellowgreen;
+  }
+  100% {
+    box-shadow: 0 0 5px green, 0 0 10px green, 0 0 15px green, 0 0 20px yellowgreen;
+  }
+}
+
+@keyframes flicker-medium {
+  0% {
+    box-shadow: 0 0 5px blue, 0 0 10px lightblue, 0 0 15px cyan;
+  }
+  50% {
+    box-shadow: 0 0 10px blue, 0 0 15px lightblue, 0 0 20px cyan;
+  }
+  100% {
+    box-shadow: 0 0 5px blue, 0 0 10px lightblue, 0 0 15px cyan;
+  }
+}
+
+@keyframes flicker-hard {
+  0% {
+    box-shadow: 0 0 5px red, 0 0 10px orange, 0 0 15px firebrick, 0 0 20px darkred;
+  }
+  50% {
+    box-shadow: 0 0 10px red, 0 0 15px orange, 0 0 20px firebrick, 0 0 25px darkred;
+  }
+  100% {
+    box-shadow: 0 0 5px red, 0 0 10px orange, 0 0 15px firebrick, 0 0 20px darkred;
+  }
+}
+
+@keyframes flicker-legendary {
+  0% {
+    box-shadow: 0 0 5px purple, 0 0 10px violet, 0 0 15px indigo, 0 0 20px blue;
+  }
+  50% {
+    box-shadow: 0 0 10px purple, 0 0 15px violet, 0 0 20px indigo, 0 0 25px blue;
+  }
+  100% {
+    box-shadow: 0 0 5px purple, 0 0 10px violet, 0 0 15px indigo, 0 0 20px blue;
+  }
+}
+
+/* Ripple effect keyframes for modals */
+@keyframes ripplePulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(8);
+    opacity: 0;
+  }
+}
+
+.animate-ping-slow {
+  animation: ripplePulse 4s infinite;
+}
+.animate-ping-medium {
+  animation: ripplePulse 3s infinite;
+}
+.animate-ping-fast {
+  animation: ripplePulse 2s infinite;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @plugin "@tailwindcss/forms" {
   strategy: base;
