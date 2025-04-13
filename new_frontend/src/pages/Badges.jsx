@@ -11,6 +11,64 @@ import { Dialog } from "@headlessui/react";
 
 const badgeImagePath = "/images/WattBadges/";
 
+const getBadgeEffects = (difficulty) => {
+  switch (difficulty) {
+    case "wattlord":
+      return {
+        glow: "shadow-[0_0_40px_10px_rgba(128,0,128,0.8)]",
+        animation: {
+          scale: [1, 1.13, 1],
+          transition: {
+            repeat: 2,
+            duration: 1.2,
+            ease: "easeInOut",
+          },
+        },
+        aura: "bg-[radial-gradient(circle,_rgba(128,0,128,0.15)_0%,_transparent_70%)]",
+      };
+    case "wattmaster":
+      return {
+        glow: "shadow-[0_0_30px_5px_rgba(255,0,0,0.6)]",
+        animation: {
+          scale: [1, 1.09, 1],
+          transition: {
+            repeat: 2,
+            duration: 1.5,
+            ease: "easeInOut",
+          },
+        },
+        aura: "bg-[radial-gradient(circle,_rgba(255,0,0,0.1)_0%,_transparent_70%)]",
+      };
+    case "wattknight":
+      return {
+        glow: "shadow-[0_0_20px_3px_rgba(30,144,255,0.4)]",
+        animation: {
+          scale: [1, 1.07, 1],
+          transition: {
+            repeat: 2,
+            duration: 2,
+            ease: "easeInOut",
+          },
+        },
+        aura: "bg-[radial-gradient(circle,_rgba(30,144,255,0.1)_0%,_transparent_70%)]",
+      };
+    case "padawatt":
+    default:
+      return {
+        glow: "shadow-[0_0_10px_2px_rgba(144,238,144,0.3)]",
+        animation: {
+          scale: [1, 1.03, 1],
+          transition: {
+            repeat: Infinity,
+            duration: 2.5,
+            ease: "easeInOut",
+          },
+        },
+        aura: "",
+      };
+  }
+};
+
 
 function Badges() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -57,6 +115,8 @@ function Badges() {
   const filteredBadges = badges.filter((badge) => {
     if (filter === "unlocked") return unlockedBadges.has(badge.id);
     if (filter === "locked") return !unlockedBadges.has(badge.id);
+    if (["padawatt", "wattknight", "wattmaster", "wattlord"].includes(filter))
+      return badge.difficulty === filter;
     return true;
   });
 
@@ -75,7 +135,7 @@ function Badges() {
         ? "border-animate-legendary"
         : ""
       : "";
-
+    
     return (
       <motion.div
         key={badge.id}
@@ -143,6 +203,10 @@ function Badges() {
                 <option value="all">All</option>
                 <option value="unlocked">Unlocked</option>
                 <option value="locked">Locked</option>
+                <option value="padawatt">Padawatt</option>
+                <option value="wattknight">Wattknight</option>
+                <option value="wattmaster">Wattmaster</option>
+                <option value="wattlord">Wattlord</option>
               </select>
             </div>
 
@@ -161,51 +225,65 @@ function Badges() {
         </main>
       </div>
 
-      {/* Badge Modal with improved dimming */}
+      {/* Badge Modal dimming effect */}
       {selectedBadge && (
-        <Dialog open={true} onClose={() => setSelectedBadge(null)} className="relative z-50">
-          {/* Overlay */}
-          <div
-        className="fixed inset-0"
-        style={{
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-        }}
-        aria-hidden="true"
-          />
-        {/* Modal panel */}
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md mx-auto shadow-2xl text-center">
-            <Dialog.Title className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              {selectedBadge.name}
-            </Dialog.Title>
-            <img
-              src={`${badgeImagePath}${selectedBadge.image}`}
-              alt={selectedBadge.name}
-              className="w-64 h-64 object-contain mx-auto mb-4"
-            />
-            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-              {selectedBadge.description || "No description available."}
-            </p>
-            {unlockedBadges.has(selectedBadge.id) ? (
-              <p className="text-green-600 dark:text-green-400 text-sm">
-                ✅ Unlocked on{" "}
-                {new Date(unlockedDetails[selectedBadge.id]).toLocaleDateString()}
-              </p>
-            ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-sm">
-                🔒 Requires {selectedBadge.threshold} points.
-              </p>
-            )}
-            <button
-              onClick={() => setSelectedBadge(null)}
-              className="mt-4 px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700"
-            >
-              Close
-            </button>
-          </Dialog.Panel>
-        </div>
-      </Dialog>
-    )}
+  <Dialog open={true} onClose={() => setSelectedBadge(null)} className="relative z-50">
+    {/* Overlay */}
+    <div
+      className="fixed inset-0"
+      style={{
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+      }}
+      aria-hidden="true"
+    />
+    {/* Modal panel */}
+    <div className="fixed inset-0 flex items-center justify-center p-4">
+      <Dialog.Panel className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md mx-auto shadow-2xl text-center">
+        <Dialog.Title className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+          {selectedBadge.name}
+        </Dialog.Title>
+        
+        {/* Here is where the effect should be applied */}
+        {(() => {
+          // Get the effects based on the badge's difficulty level
+          const effects = getBadgeEffects(selectedBadge.difficulty);
+
+          return (
+            <div className={`relative w-64 h-64 mx-auto mb-4 flex items-center justify-center ${effects.aura}`}>
+              <motion.img
+                key={selectedBadge.id + "-animation"}
+                src={`${badgeImagePath}${selectedBadge.image}`}
+                alt={selectedBadge.name}
+                className={`w-full h-full object-contain rounded-full ${effects.glow}`}
+                animate={effects.animation}
+              />
+            </div>
+          );
+        })()}
+
+        <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+          {selectedBadge.description || "No description available."}
+        </p>
+        {unlockedBadges.has(selectedBadge.id) ? (
+          <p className="text-green-600 dark:text-green-400 text-sm">
+            ✅ Unlocked on{" "}
+            {new Date(unlockedDetails[selectedBadge.id]).toLocaleDateString()}
+          </p>
+        ) : (
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            🔒 Requires {selectedBadge.threshold} points.
+          </p>
+        )}
+        <button
+          onClick={() => setSelectedBadge(null)}
+          className="mt-4 px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700"
+        >
+          Close
+        </button>
+      </Dialog.Panel>
+    </div>
+  </Dialog>
+)}
     </div>
   );
 }

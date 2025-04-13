@@ -85,13 +85,13 @@ body{
 /* Flicker effect keyframes */
 @keyframes flicker-easy {
   0% {
-    box-shadow: 0 0 5px green, 0 0 10px yellow, 0 0 15px orange, 0 0 20px red;
+    box-shadow: 0 0 5px green, 0 0 10px green, 0 0 15px green, 0 0 20px yellowgreen;
   }
   50% {
-    box-shadow: 0 0 10px green, 0 0 15px yellow, 0 0 20px orange, 0 0 25px red;
+    box-shadow: 0 0 10px green, 0 0 15px green, 0 0 20px green, 0 0 25px yellowgreen;
   }
   100% {
-    box-shadow: 0 0 5px green, 0 0 10px yellow, 0 0 15px orange, 0 0 20px red;
+    box-shadow: 0 0 5px green, 0 0 10px green, 0 0 15px green, 0 0 20px yellowgreen;
   }
 }
 
@@ -131,7 +131,27 @@ body{
   }
 }
 
+/* Ripple effect keyframes for modals */
+@keyframes ripplePulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(8);
+    opacity: 0;
+  }
+}
 
+.animate-ping-slow {
+  animation: ripplePulse 4s infinite;
+}
+.animate-ping-medium {
+  animation: ripplePulse 3s infinite;
+}
+.animate-ping-fast {
+  animation: ripplePulse 2s infinite;
+}
 
 
 
