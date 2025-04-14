@@ -193,7 +193,7 @@ function Badges() {
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">
-                Badges
+                My Badges
               </h1>
               <select
                 value={filter}

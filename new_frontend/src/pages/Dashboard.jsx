@@ -6,6 +6,7 @@ import DashboardCard01 from '../partials/dashboard/DashboardCard01';
 import DashboardCard02 from '../partials/dashboard/DashboardCard02';
 import DashboardCard03 from '../partials/dashboard/DashboardCard03';
 import DashboardCardChallenges from '../partials/dashboard/DashboardCardChallenges';
+import DashboardCardChallenges02 from '../partials/dashboard/DashboardCardChallenges02';
 import { usePoints } from '../contexts/PointsContext';
 
 
@@ -93,6 +94,8 @@ function Dashboard() {
               <div className="col-span-12">
                 <h2 className="text-xl font-bold mt-6">Challenges Progress</h2>
                 <DashboardCardChallenges onPointsClaimed={handlePointsClaimed} /> {/* onPointsClaimed={handlePointsClaimed} so points in sidepanel update immediately if points claimed*/}
+                <br></br>
+                <DashboardCardChallenges02 onPointsClaimed={handlePointsClaimed} />
               </div>
             </div>
           </div>

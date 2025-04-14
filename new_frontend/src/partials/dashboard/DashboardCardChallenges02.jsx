@@ -176,7 +176,7 @@ function DashboardCardChallenges02({ showAll = false, onPointsClaimed }) {
 
       {!showAll && (
         <div className="mt-4 text-center">
-          <Link to="/weekly-challenges" className="text-sm text-blue-600 font-semibold hover:underline">
+          <Link to="/challenges" className="text-sm text-blue-600 font-semibold hover:underline">
             See All Weekly Challenges →
           </Link>
         </div>
