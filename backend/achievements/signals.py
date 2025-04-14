@@ -7,7 +7,7 @@ def create_default_badges(sender, **kwargs):
     if sender.name == "achievements":
         default_badges = [
             # padawatt (Beginner)
-            {"name": "The Journey Begins", "threshold": 0, "image": "The_Journey_Begins.png", "difficulty": "padawatt"},
+            {"name": "The Journey Begins", "threshold": 1, "image": "The_Journey_Begins.png", "difficulty": "padawatt"},
             {"name": "Wattling", "threshold": 3, "image": "Wattling.png", "difficulty": "padawatt"},
             {"name": "Wattdawan", "threshold": 10, "image": "Wattdawan.png", "difficulty": "padawatt"},
 
