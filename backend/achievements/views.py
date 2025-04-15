@@ -1,7 +1,10 @@
 from django.http import JsonResponse
-from .models import TotalPoints, Badge, UnlockedBadge
+from .models import TotalPoints, Badge, UnlockedBadge, SelectedBadge
 from django.db.models import Sum
 from challenges.models import Challenge, WeeklyChallenge
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
 
 def get_total_points(request):
     # Sum up points from only completed & claimed challenges
@@ -54,4 +57,45 @@ def check_and_unlock_badges():
         if not UnlockedBadge.objects.filter(badge=badge).exists():
             UnlockedBadge.objects.create(badge=badge)  # Unlock the badge
             print(f"🔓 Unlocked new badge: {badge.name}")  # Debugging message
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def set_selected_badge(request):
+    try:
+        data = json.loads(request.body)
+        badge_id = data.get("badge_id")
+
+        if not badge_id:
+            return JsonResponse({"error": "Badge ID not provided."}, status=400)
+
+        try:
+            badge = Badge.objects.get(id=badge_id)
+        except Badge.DoesNotExist:
+            return JsonResponse({"error": "Badge not found."}, status=404)
+
+        if not UnlockedBadge.objects.filter(badge=badge).exists():
+            return JsonResponse({"error": "Badge is not unlocked yet."}, status=403)
+
+        SelectedBadge.objects.all().delete()  # Clear previous selection (only one allowed)
+        SelectedBadge.objects.create(badge=badge)
+        return JsonResponse({"message": f"{badge.name} selected successfully."})
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON."}, status=400)
+
+
+def get_selected_badge(request):
+    selected = SelectedBadge.objects.first()
+    if not selected:
+        return JsonResponse({"selected_badge": None})
+    
+    return JsonResponse({
+        "selected_badge": {
+            "id": selected.badge.id,
+            "name": selected.badge.name,
+            "image": selected.badge.image,
+        }
+    })
+
 

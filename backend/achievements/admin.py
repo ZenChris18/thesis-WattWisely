@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Badge, UnlockedBadge, TotalPoints
+from .models import Badge, UnlockedBadge, TotalPoints, SelectedBadge
 
 @admin.register(Badge)
 class BadgeAdmin(admin.ModelAdmin):
@@ -14,3 +14,5 @@ class UnlockedBadgeAdmin(admin.ModelAdmin):
 @admin.register(TotalPoints)
 class TotalPointsAdmin(admin.ModelAdmin):
     list_display = ("points",)
+
+admin.site.register(SelectedBadge)

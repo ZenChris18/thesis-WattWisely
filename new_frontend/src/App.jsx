@@ -14,7 +14,8 @@ import StartScreen from './components/StartScreen';
 import LoadingScreen from './components/LoadingScreen';
 
 // Import PointsProvider
-import { PointsProvider } from './contexts/PointsContext'; // Import the PointsProvider
+import { PointsProvider } from './contexts/PointsContext'; // Imports the PointsProvider
+import { BadgeProvider } from './contexts/BadgeContext';
 
 function App() {
   const [showStartScreen, setShowStartScreen] = useState(() => {
@@ -41,6 +42,7 @@ function App() {
 
   return (
     <PointsProvider> {/* Wrap the app with PointsProvider */}
+    <BadgeProvider>
       <AnimatePresence mode="wait">
         {showStartScreen && <StartScreen onFinish={handleStartScreenFinish} />}
         {showLoadingScreen && <LoadingScreen />}
@@ -55,6 +57,7 @@ function App() {
           </Routes>
         )}
       </AnimatePresence>
+      </BadgeProvider>
     </PointsProvider>
   );
 }

@@ -1,30 +1,27 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Transition from '../utils/Transition';
+import { useBadge } from '../contexts/BadgeContext';
 
-import UserAvatar from '../images/user-avatar-32.png';
-
-function DropdownProfile({
-  align
-}) {
-
+function DropdownProfile({ align }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
   const trigger = useRef(null);
   const dropdown = useRef(null);
 
-  // close on click outside
+  const { badge: showcasedBadge } = useBadge();
+
+  // Click outside dropdown
   useEffect(() => {
     const clickHandler = ({ target }) => {
-      if (!dropdown.current) return;
+      if (!dropdown.current || !trigger.current) return;
       if (!dropdownOpen || dropdown.current.contains(target) || trigger.current.contains(target)) return;
       setDropdownOpen(false);
     };
+
     document.addEventListener('click', clickHandler);
     return () => document.removeEventListener('click', clickHandler);
-  });
+  }, [dropdownOpen]);
 
-  // close if the esc key is pressed
   useEffect(() => {
     const keyHandler = ({ keyCode }) => {
       if (!dropdownOpen || keyCode !== 27) return;
@@ -36,24 +33,24 @@ function DropdownProfile({
 
   return (
     <div className="relative inline-flex">
-      <button
-        ref={trigger}
-        className="inline-flex justify-center items-center group"
-        aria-haspopup="true"
-        onClick={() => setDropdownOpen(!dropdownOpen)}
-        aria-expanded={dropdownOpen}
-      >
-        <img className="w-8 h-8 rounded-full" src={UserAvatar} width="32" height="32" alt="User" />
-        <div className="flex items-center truncate">
-          <span className="truncate ml-2 text-sm font-medium text-gray-600 dark:text-gray-100 group-hover:text-gray-800 dark:group-hover:text-white">User</span>
-          <svg className="w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500" viewBox="0 0 12 12">
-            <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-          </svg>
-        </div>
+      <button onClick={() => setDropdownOpen(!dropdownOpen)} className="focus:outline-none" ref={trigger}>
+        {/* Display badge if selected, else show placeholder */}
+        {showcasedBadge ? (
+          <img
+            src={`/images/WattBadges/${showcasedBadge.image}`}
+            alt={showcasedBadge.name}
+            className="w-14 h-14 rounded-full border-2 border-violet-500 shadow-md hover:scale-105 transition-transform"
+            title="Click to manage badge"
+          />
+        ) : (
+          <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
+            <span className="text-white">No Badge</span>
+          </div>
+        )}
       </button>
 
       <Transition
-        className={`origin-top-right z-10 absolute top-full min-w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 py-1.5 rounded-lg shadow-lg overflow-hidden mt-1 ${align === 'right' ? 'right-0' : 'left-0'}`}
+        className={`origin-top-right z-10 absolute top-full min-w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 py-3 rounded-lg shadow-lg overflow-hidden mt-1 ${align === 'right' ? 'right-0' : 'left-0'}`}
         show={dropdownOpen}
         enter="transition ease-out duration-200 transform"
         enterStart="opacity-0 -translate-y-2"
@@ -62,39 +59,39 @@ function DropdownProfile({
         leaveStart="opacity-100"
         leaveEnd="opacity-0"
       >
-        <div
-          ref={dropdown}
-          onFocus={() => setDropdownOpen(true)}
-          onBlur={() => setDropdownOpen(false)}
-        >
-          <div className="pt-0.5 pb-2 px-3 mb-1 border-b border-gray-200 dark:border-gray-700/60">
-            <div className="font-medium text-gray-800 dark:text-gray-100">User</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 italic">hello tester</div>
+        <div ref={dropdown}>
+          {/* If a badge is selected, show its details */}
+          {showcasedBadge ? (
+            <div className="flex flex-col items-center px-4 pb-2 border-b border-gray-200 dark:border-gray-700/60">
+              <img
+                src={`/images/WattBadges/${showcasedBadge.image}`}
+                alt={showcasedBadge.name}
+                className="w-48 h-48 rounded-full shadow-lg mb-2"
+              />
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-2 text-center">
+                <span className="font-semibold">{showcasedBadge.name}</span>
+              </p>
+            </div>
+          ) : (
+            <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+              <p>No badge selected</p>
+            </div>
+          )}
+
+          {/* Change badge link */}
+          <div className="px-4 pt-3">
+            <Link
+              to="/badges"
+              onClick={() => setDropdownOpen(false)}
+              className="w-full block text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md text-center transition-colors"
+            >
+              {showcasedBadge ? 'Change showcased badge' : 'Select a badge'}
+            </Link>
           </div>
-          <ul>
-            <li>
-              <Link
-                className="font-medium text-sm text-violet-500 hover:text-violet-600 dark:hover:text-violet-400 flex items-center py-1 px-3"
-                to="/settings"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              >
-                Settings
-              </Link>
-            </li>
-            <li>
-              <Link
-                className="font-medium text-sm text-violet-500 hover:text-violet-600 dark:hover:text-violet-400 flex items-center py-1 px-3"
-                to="/signin"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              >
-                Sign Out
-              </Link>
-            </li>
-          </ul>
         </div>
       </Transition>
     </div>
-  )
+  );
 }
 
 export default DropdownProfile;

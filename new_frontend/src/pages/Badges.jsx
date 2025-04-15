@@ -5,9 +5,12 @@ import {
   fetchBadges,
   fetchUnlockedBadges,
   fetchTotalPoints,
+  setBadgeShowcase,
 } from "../services/powerDataService";
 import { motion } from "framer-motion";
 import { Dialog } from "@headlessui/react";
+import { useBadge } from "../contexts/BadgeContext";
+
 
 const badgeImagePath = "/images/WattBadges/";
 
@@ -32,7 +35,7 @@ const getBadgeEffects = (difficulty) => {
         animation: {
           scale: [1, 1.09, 1],
           transition: {
-            repeat: 2,
+            repeat: 1,
             duration: 1.5,
             ease: "easeInOut",
           },
@@ -45,7 +48,7 @@ const getBadgeEffects = (difficulty) => {
         animation: {
           scale: [1, 1.07, 1],
           transition: {
-            repeat: 2,
+            repeat: 0,
             duration: 2,
             ease: "easeInOut",
           },
@@ -69,7 +72,6 @@ const getBadgeEffects = (difficulty) => {
   }
 };
 
-
 function Badges() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [badges, setBadges] = useState([]);
@@ -79,6 +81,38 @@ function Badges() {
   const [filter, setFilter] = useState("all");
   const [newlyUnlocked, setNewlyUnlocked] = useState([]);
   const [selectedBadge, setSelectedBadge] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const { badge, setBadge } = useBadge();
+  const [showcaseBadgeId, setShowcaseBadgeId] = useState(null);
+  const { badge: showcasedBadge } = useBadge();
+
+
+  
+  const handleSetShowcase = async () => {
+    if (selectedBadge) {
+      if (selectedBadge.id === showcasedBadge?.id) {
+        setErrorMessage("This badge is already your showcase badge.");
+        setSuccessMessage("");
+        return;
+      }
+  
+      console.log("Sending badge to backend:", selectedBadge.id);
+      const result = await setBadgeShowcase(selectedBadge.id);
+      if (result) {
+        setShowcaseBadgeId(selectedBadge.id);
+        setBadge(selectedBadge); // this is the one updating the header badge immediately
+        setSuccessMessage(result);
+        setErrorMessage("");
+      } else {
+        setErrorMessage("Failed to set the showcase badge.");
+        setSuccessMessage("");
+      }
+    }
+  };
+  
+  
+  
 
   useEffect(() => {
     const loadData = async () => {
@@ -123,6 +157,7 @@ function Badges() {
   const renderBadgeCard = (badge, isUnlocked) => {
     const progress = Math.min((totalPoints / badge.threshold) * 100, 100);
     const isNewlyUnlocked = isUnlocked && newlyUnlocked.includes(badge.id);
+    const isShowcased = showcasedBadge?.id === badge.id;
 
     const difficultyClass = isUnlocked
       ? badge.difficulty === "padawatt"
@@ -135,7 +170,7 @@ function Badges() {
         ? "border-animate-legendary"
         : ""
       : "";
-    
+
     return (
       <motion.div
         key={badge.id}
@@ -143,7 +178,7 @@ function Badges() {
         animate={{ opacity: 1, scale: 1 }}
         whileHover={{ scale: 1.05 }}
         transition={{ duration: 0.3 }}
-        onClick={() => setSelectedBadge(badge)}
+        onClick={() => setSelectedBadge(badge)}  // Opens the modal
         className={`relative cursor-pointer flex flex-col items-center justify-start p-4 rounded-2xl w-full max-w-[200px] shadow-lg
           ${isUnlocked ? "bg-white dark:bg-gray-800" : "bg-gray-100 dark:bg-gray-700 opacity-50"}
           ${isNewlyUnlocked ? "ring-4 ring-yellow-400 sunray-shine" : ""}
@@ -151,14 +186,17 @@ function Badges() {
         `}
       >
         <motion.img
-          src={`/images/WattBadges/${badge.image}`}
+          src={`${badgeImagePath}${badge.image}`}
           alt={badge.name}
-          className={`relative z-10 w-28 h-28 object-contain mb-2 ${
-            isUnlocked ? "" : "grayscale opacity-50"
-          }`}
+          className={`relative z-10 w-28 h-28 object-contain mb-2 ${isUnlocked ? "" : "grayscale opacity-50"}`}
           animate={isNewlyUnlocked ? { scale: [1, 1.2, 1] } : {}}
           transition={{ duration: 0.6, repeat: 2 }}
         />
+        {isShowcased && (
+          <div className="absolute top-2 right-2 bg-[#9C27B0] text-white text-xs px-2 py-1 rounded-full shadow">
+            Showcased
+          </div>
+        )}
         <p className="text-sm text-center font-medium text-gray-800 dark:text-gray-100">
           {badge.name}
         </p>
@@ -195,19 +233,21 @@ function Badges() {
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">
                 My Badges
               </h1>
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100"
-              >
-                <option value="all">All</option>
-                <option value="unlocked">Unlocked</option>
-                <option value="locked">Locked</option>
-                <option value="padawatt">Padawatt</option>
-                <option value="wattknight">Wattknight</option>
-                <option value="wattmaster">Wattmaster</option>
-                <option value="wattlord">Wattlord</option>
-              </select>
+              <div className="flex gap-3">
+                <select
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100"
+                >
+                  <option value="all">All</option>
+                  <option value="unlocked">Unlocked</option>
+                  <option value="locked">Locked</option>
+                  <option value="padawatt">Padawatt</option>
+                  <option value="wattknight">Wattknight</option>
+                  <option value="wattmaster">Wattmaster</option>
+                  <option value="wattlord">Wattlord</option>
+                </select>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
@@ -225,65 +265,86 @@ function Badges() {
         </main>
       </div>
 
-      {/* Badge Modal dimming effect */}
+      {/* Modal */}
       {selectedBadge && (
-  <Dialog open={true} onClose={() => setSelectedBadge(null)} className="relative z-50">
-    {/* Overlay */}
-    <div
-      className="fixed inset-0"
-      style={{
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-      }}
-      aria-hidden="true"
-    />
-    {/* Modal panel */}
-    <div className="fixed inset-0 flex items-center justify-center p-4">
-      <Dialog.Panel className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md mx-auto shadow-2xl text-center">
-        <Dialog.Title className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-          {selectedBadge.name}
-        </Dialog.Title>
-        
-        {/* Here is where the effect should be applied */}
-        {(() => {
-          // Get the effects based on the badge's difficulty level
-          const effects = getBadgeEffects(selectedBadge.difficulty);
-
-          return (
-            <div className={`relative w-64 h-64 mx-auto mb-4 flex items-center justify-center ${effects.aura}`}>
-              <motion.img
-                key={selectedBadge.id + "-animation"}
-                src={`${badgeImagePath}${selectedBadge.image}`}
-                alt={selectedBadge.name}
-                className={`w-full h-full object-contain rounded-full ${effects.glow}`}
-                animate={effects.animation}
-              />
-            </div>
-          );
-        })()}
-
-        <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-          {selectedBadge.description || "No description available."}
-        </p>
-        {unlockedBadges.has(selectedBadge.id) ? (
-          <p className="text-green-600 dark:text-green-400 text-sm">
+        <Dialog
+  open={true}
+  onClose={() => {
+    setSelectedBadge(null);
+    setSuccessMessage("");  // Clear success message
+    setErrorMessage("");    // Clear error message
+  }}
+  className="relative z-50"
+>
+  <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
+  <div className="fixed inset-0 flex items-center justify-center p-4">
+    <Dialog.Panel className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md mx-auto shadow-2xl text-center">
+      <Dialog.Title className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+        {selectedBadge.name}
+      </Dialog.Title>
+      {(() => {
+        const effects = getBadgeEffects(selectedBadge.difficulty);
+        return (
+          <div className={`relative w-64 h-64 mx-auto mb-4 flex items-center justify-center ${effects.aura}`}>
+            <motion.img
+              key={selectedBadge.id + "-animation"}
+              src={`${badgeImagePath}${selectedBadge.image}`}
+              alt={selectedBadge.name}
+              className={`w-full h-full object-contain rounded-full ${effects.glow}`}
+              animate={effects.animation}
+            />
+          </div>
+        );
+      })()}
+      <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+        {selectedBadge.description || "No description available."}
+      </p>
+      {unlockedBadges.has(selectedBadge.id) ? (
+        <>
+          <p className="text-green-600 dark:text-green-400 text-sm mb-2">
             ✅ Unlocked on{" "}
             {new Date(unlockedDetails[selectedBadge.id]).toLocaleDateString()}
           </p>
-        ) : (
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            🔒 Requires {selectedBadge.threshold} points.
-          </p>
-        )}
+          <button
+            onClick={handleSetShowcase}
+            className="px-6 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition duration-200"
+          >
+            Showcase this badge
+          </button>
+        </>
+      ) : (
+        <p className="text-gray-500 dark:text-gray-400 text-sm">
+          🔒 Requires {selectedBadge.threshold} points.
+        </p>
+      )}
+
+      {/* Success or Error Messages */}
+      {successMessage && (
+        <div className="mt-3 text-green-600">{successMessage}</div>
+      )}
+      {errorMessage && (
+        <div className="mt-3 text-red-600">{errorMessage}</div>
+      )}
+
+      <div className="mt-4 flex gap-4 justify-center">
+        {/* Close Button */}
         <button
-          onClick={() => setSelectedBadge(null)}
-          className="mt-4 px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700"
+          onClick={() => {
+            setSelectedBadge(null);
+            setSuccessMessage(""); 
+            setErrorMessage("");  
+          }}
+          className="px-6 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition duration-200"
         >
           Close
         </button>
-      </Dialog.Panel>
-    </div>
-  </Dialog>
+      </div>
+    </Dialog.Panel>
+  </div>
+</Dialog>
+
 )}
+
     </div>
   );
 }

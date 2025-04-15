@@ -202,8 +202,6 @@ export const fetchUnlockedBadges = async () => {
     const response = await fetch(`http://${IP}:8000/achievements/unlocked-badges/`);
     if (!response.ok) throw new Error("Failed to fetch unlocked badges");
     const data = await response.json();
-
-    // No need to map, as the structure now matches directly
     return data.unlocked_badges || [];
   } catch (error) {
     console.error("Error fetching unlocked badges:", error);
@@ -225,5 +223,55 @@ export const fetchBadges = async () => {
   } catch (error) {
     console.error("Error fetching badges:", error);
     return []; // Return an empty array in case of an error
+  }
+};
+
+
+// set selected badge
+export const setBadgeShowcase = async (badgeId) => {
+  try {
+    const response = await fetch(`http://${IP}:8000/achievements/select-badge/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ badge_id: badgeId }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to set selected badge");
+    }
+
+    const data = await response.json();
+    return data.message || "Badge selected successfully!";
+  } catch (error) {
+    console.error("Error setting selected badge:", error);
+    return "Error setting selected badge";
+  }
+};
+
+export const getSelectedBadge = async () => {
+  try {
+    const response = await fetch(`http://${IP}:8000/achievements/selected-badge/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to get selected badge");
+    }
+
+    const data = await response.json();
+
+    if (data.selected_badge) {
+      return data.selected_badge;
+    } else {
+      return "No badge selected";
+    }
+  } catch (error) {
+    console.error("Error getting selected badge:", error);
+    return "Error getting selected badge";
   }
 };

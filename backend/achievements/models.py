@@ -30,3 +30,10 @@ class UnlockedBadge(models.Model):
 
     def __str__(self):
         return f"Unlocked: {self.badge.name}"
+
+# this is for the showcase badge
+class SelectedBadge(models.Model):
+    badge = models.OneToOneField(Badge, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Selected: {self.badge.name}"
