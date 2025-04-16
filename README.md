@@ -1,7 +1,11 @@
 # Thesis-wattwisely
 
 ## before starting
-1. make env file
+1. make env file in backend folder
+- INFLUXDB_URL="localhost if hosted on the same machine or the ip address of the influxdb"
+- INFLUXDB_TOKEN="Token"
+- INFLUXDB_ORG="org name"
+- INFLUXDB_BUCKET="bucket name"
 
 2. install dependencies for django python use venv go to backend folder type this 
     - python -m venv venv
