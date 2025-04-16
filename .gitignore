@@ -6,3 +6,4 @@ backend/.env
 venv
 backend/venv
 backend/db.sqlite3
+backend/db.sqlite3
