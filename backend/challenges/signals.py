@@ -1,5 +1,6 @@
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
+from django.utils import timezone
 from .models import Challenge, WeeklyChallenge
 
 @receiver(post_migrate)
@@ -8,7 +9,7 @@ def create_default_challenges(sender, **kwargs):
 
         # 40 points for the first 10 challenges
         default_challenges = [
-            {"title": "Trial 1", "description": "Get started by opening WattWisely.", "requirement_kwh": 0, "points": 1},
+            {"title": "Trial 1", "description": "Get started by opening WattWisely.", "requirement_kwh": 0, "points": 1, "status": True, "date_completed": timezone.now(), "claimed": False},
             {"title": "Trial 2", "description": "Make a small change—use at least 0.5 kWh less than yesterday.", "requirement_kwh": 0.5, "points": 1},
             {"title": "Trial 3", "description": "Keep going! Reduce your usage by at least 2 kWh compared to yesterday.", "requirement_kwh": 2, "points": 2},
             {"title": "Trial 4", "description": "You’re building a habit! Save at least 4 kWh more than yesterday.", "requirement_kwh": 4, "points": 3},
