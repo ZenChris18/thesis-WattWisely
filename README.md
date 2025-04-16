@@ -16,15 +16,19 @@
 3. install dependencies for react.js go to new_frontend
     - npm install
 
-## commands to make frontend and backend run
+4. update sqlite database (if db.sqlite3 is deleted or extracted)
+
+    - python manage.py makemigrations
+
+    - python manage.py migrate
+
+## commands to make frontend and backend start
 
 1. django - python manage.py runserver 0.0.0.0:8000 (go to backend folder)
+                or 
+          - python python start.py (this will run the migrations if it doesnt exist and also make the server start)
 
 2. npm run dev -- --host (go to new_frontend folder)
 
-## update sqlite database 
 
-1. python manage.py makemigrations
-
-2. python manage.py migrate
 
