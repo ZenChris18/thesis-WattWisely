@@ -296,9 +296,6 @@ function Badges() {
           </div>
         );
       })()}
-      <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-        {selectedBadge.description || "No description available."}
-      </p>
       {unlockedBadges.has(selectedBadge.id) ? (
         <>
           <p className="text-green-600 dark:text-green-400 text-sm mb-2">
