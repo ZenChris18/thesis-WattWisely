@@ -116,8 +116,8 @@ function Analytics() {
 
         {/* Sticky Buttons Section */}
         <div
-          className={`sticky top-0 bg-white dark:bg-gray-900 py-4 shadow-md transition-all duration-300 ${
-            sidebarOpen ? "z-10" : "z-50"
+          className={`sticky top-15 bg-white dark:bg-gray-900 py-3 shadow-md transition-all duration-300 ${
+            sidebarOpen ? "z-10" : "z-29" /* change second z to 29 to be below the dropdown profile */
           }`}
         >
           <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
