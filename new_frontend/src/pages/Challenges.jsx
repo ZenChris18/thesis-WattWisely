@@ -38,10 +38,6 @@ function Challenges() {
             <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold mb-6">
               Challenges
             </h1>
-            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
-              🌟 Watt Points: {totalPoints}
-            </h2>
-
             {/* Challenges Section */}
             <div className="space-y-6">
               <DashboardCardChallenges
