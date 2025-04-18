@@ -14,7 +14,7 @@
     - pip install -r requirements.txt
 
 3. install dependencies for react.js go to new_frontend
-    - npm install
+    - npm install (go to new_frontend folder to install the dependencies only on that folder)
 
 4. update sqlite database (if db.sqlite3 is deleted or extracted)
 
