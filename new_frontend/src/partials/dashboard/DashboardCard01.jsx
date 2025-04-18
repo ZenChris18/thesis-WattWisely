@@ -24,7 +24,7 @@ function DashboardCard01({ selectedTimeframe, selectedAppliance }) {
       let consumptionValue = 0;
 
       if (selectedAppliance && selectedAppliance.id !== "overall") {
-        // ✅ Specific device: Use average_power_w for that appliance
+        // Specific device: Use average_power_w for that appliance
         const selectedData = data.appliances?.find(appliance => appliance.entity_id === selectedAppliance.id);
         if (selectedData) {
           consumptionValue = selectedData.current?.average_power_w || 0;
@@ -34,7 +34,7 @@ function DashboardCard01({ selectedTimeframe, selectedAppliance }) {
           })).reverse() || [];
         }
       } else {
-        // ✅ "Overall": Use latest_data from the "current" object
+        // "Overall": Use latest_data from the "current" object
         consumptionValue = data.current?.latest_data || 0;
 
         const combinedData = {};
