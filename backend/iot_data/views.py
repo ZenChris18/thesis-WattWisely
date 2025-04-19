@@ -1,7 +1,13 @@
-from rest_framework.response import Response
+
 from rest_framework.decorators import api_view
-from .influx_service import fetch_power_data
-from .services import calculate_power_metrics
+from rest_framework.response import Response
+from .influx_service   import fetch_power_data
+from .services         import calculate_power_metrics
+from .pdf_generator    import pdf_response_for_request
+
+@api_view(['GET'])
+def export_pdf_view(request):
+    return pdf_response_for_request(request)
 
 @api_view(['GET'])
 def power_data_view(request):

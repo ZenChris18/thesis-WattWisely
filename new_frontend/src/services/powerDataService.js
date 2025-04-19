@@ -275,3 +275,12 @@ export const getSelectedBadge = async () => {
     return "Error getting selected badge";
   }
 };
+
+export const exportPowerPdf = async (timeframe, device = "all") => {
+  const url = `http://${IP}:8000/api/export-pdf/?start=${timeframe}&device=${device}`;
+  const resp = await fetch(url);
+  if (!resp.ok) {
+    throw new Error(`PDF export failed: ${resp.status}`);
+  }
+  return await resp.blob();
+};

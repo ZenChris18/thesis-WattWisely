@@ -7,7 +7,7 @@ import DashboardCard03 from '../partials/dashboard/DashboardCard03';
 import DashboardCard05 from '../partials/dashboard/DashboardCard05';
 import DashboardCard06 from '../partials/dashboard/DashboardCard06';
 import { Edit2 } from 'lucide-react';
-import { fetchPowerData, fetchApplianceNames, updateApplianceName } from '../services/powerDataService';
+import { fetchPowerData, fetchApplianceNames, updateApplianceName, exportPowerPdf } from '../services/powerDataService';
 
 function Analytics() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -17,6 +17,23 @@ function Analytics() {
   const [applianceNames, setApplianceNames] = useState(() => {
     return JSON.parse(localStorage.getItem("applianceNames")) || {};
   });
+
+  const handleDownloadPdf = async () => {
+    const tf = timeframeMapping[selectedTimeframe] || "-1h";
+    const device = selectedAppliance?.id || "all";
+    try {
+      const blob = await exportPowerPdf(tf, device);
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      a.href     = url;
+      a.download = "power_report.pdf";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("PDF download error:", e);
+    }
+  };
+  
 
   const [appliances, setAppliances] = useState([
     { id: "choose", name: "Choose Appliance" },
@@ -121,6 +138,13 @@ function Analytics() {
           }`}
         >
           <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
+          <button
+  onClick={handleDownloadPdf}
+  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+>
+  Download PDF
+</button>
+
             {/* Timeframe Dropdown */}
             <div className="relative" ref={timeframeDropdownRef}>
               <button
