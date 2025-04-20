@@ -5,7 +5,8 @@ import { fetchWeeklyChallenges, completeWeeklyChallenge, claimWeeklyChallengePoi
 function DashboardCardChallenges02({ showAll = false, onPointsClaimed }) {
   const [weeklyChallenges, setWeeklyChallenges] = useState([]);
   const [expandedChallenge, setExpandedChallenge] = useState(null);
-  const [savedEnergy, setSavedEnergy] = useState(0);
+  // const [savedEnergy, setSavedEnergy] = useState(0);
+  const [savedPct, setSavedPct] = useState(0);
 
   useEffect(() => {
     const loadChallenges = async () => {
@@ -25,13 +26,16 @@ function DashboardCardChallenges02({ showAll = false, onPointsClaimed }) {
       const powerData = await fetchPowerData("-7d"); // Fetch last 7 days of energy data
 
       if (powerData?.current && powerData?.previous) {
-        const saved = powerData.previous.energy_kwh - powerData.current.energy_kwh;
-        setSavedEnergy(saved);
+        const savedKwh = powerData.previous.energy_kwh - powerData.current.energy_kwh;
+        const thisWeekPct = powerData.previous.energy_kwh > 0
+        ? (savedKwh / powerData.previous.energy_kwh) * 100
+        : 0;
+        setSavedPct(thisWeekPct);
 
         let updated = false;
 
         const completionPromises = loadedChallenges.map(async (challenge) => {
-          if (!challenge.status && saved >= challenge.requirement_kwh) {
+          if (!challenge.status && thisWeekPct >= challenge.requirement_pct) {
             const success = await completeWeeklyChallenge(challenge.id);
             if (success) updated = true;
           }
@@ -101,10 +105,10 @@ function DashboardCardChallenges02({ showAll = false, onPointsClaimed }) {
       </h2>
       <ul>
         {weeklyChallenges.map((challenge) => {
-          const meetsRequirement = savedEnergy >= challenge.requirement_kwh;
+          const meetsRequirement = savedPct >= challenge.requirement_pct;
           const progress = challenge.status
             ? 100
-            : Math.min((savedEnergy / challenge.requirement_kwh) * 100, 100);
+            : Math.min((savedPct / challenge.requirement_pct) * 100, 100);
 
           return (
             <li
@@ -153,7 +157,7 @@ function DashboardCardChallenges02({ showAll = false, onPointsClaimed }) {
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 {challenge.status
                   ? `Completed on: ${formatDateToPHT(challenge.date_completed)}`
-                  : `Required: ${challenge.requirement_kwh} kWh`}
+                  : `Required: ${challenge.requirement_pct}% reduction`}
               </p>
 
               <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-3 mt-3 relative">

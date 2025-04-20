@@ -14,6 +14,7 @@ def get_challenges(request):
             "title": c.title,
             "description": c.description,
             "requirement_kwh": c.requirement_kwh,
+            "requirement_pct": c.requirement_pct,
             "status": c.status,
             "claimed": c.claimed, 
             "points": c.points,
@@ -30,7 +31,7 @@ def complete_challenge(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            challenge_id = data.get("id")
+            challenge_id = data.get("challenge_id")
 
             challenge = Challenge.objects.get(id=challenge_id)
             if not challenge.status:
@@ -59,7 +60,7 @@ def complete_challenge(request):
 def get_weekly_challenges(request):
     try:
         challenges = WeeklyChallenge.objects.all().values(
-            "id", "title", "description", "requirement_kwh", "points", "status", "claimed", "date_completed"
+            "id", "title", "description", "requirement_kwh", "requirement_pct", "points", "status", "claimed", "date_completed"
         )
 
         return JsonResponse({"weekly_challenges": list(challenges)}, safe=False)
@@ -112,7 +113,7 @@ def complete_weekly_challenge(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            challenge_id = data.get("id")
+            challenge_id = data.get("challenge_id")
 
             challenge = WeeklyChallenge.objects.get(id=challenge_id)
             if not challenge.status:
