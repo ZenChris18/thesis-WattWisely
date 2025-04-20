@@ -5,13 +5,15 @@ import { fetchChallenges, completeChallenge, claimChallengePoints, fetchPowerDat
 function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
   const [challenges, setChallenges] = useState([]);
   const [expandedChallenge, setExpandedChallenge] = useState(null);
-  const [savedEnergy, setSavedEnergy] = useState(0);
+  // const [savedEnergy, setSavedEnergy] = useState(0);
+  const [savedPct, setSavedPct] = useState(0);
+
 
   useEffect(() => {
     const loadChallenges = async () => {
       const challengeData = await fetchChallenges();
     
-      // ✅ Make sure `claimed` is always either true or false
+      // Make sure `claimed` is always either true or false
       const fixedChallenges = challengeData.map(challenge => ({
         ...challenge,
         claimed: challenge.claimed || false, 
@@ -26,13 +28,16 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
       const powerData = await fetchPowerData("-1d");
 
       if (powerData?.current && powerData?.previous) {
-        const saved = powerData.previous.energy_kwh - powerData.current.energy_kwh;
-        setSavedEnergy(saved);
+        const savedKwh = powerData.previous.energy_kwh - powerData.current.energy_kwh;
+        const savedPct = powerData.previous.energy_kwh > 0
+          ? (savedKwh / powerData.previous.energy_kwh) * 100
+          : 0;
+        setSavedPct(savedPct);
 
         let updated = false;
 
         const completionPromises = loadedChallenges.map(async (challenge) => {
-          if (!challenge.status && saved >= challenge.requirement_kwh) {
+          if (!challenge.status && savedPct >= challenge.requirement_pct) {
             const success = await completeChallenge(challenge.id);
             if (success) updated = true;
           }
@@ -48,9 +53,9 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
 
     const sortAndSetChallenges = (challengeList) => {
       const sortedChallenges = [...challengeList].sort((a, b) => {
-        if (a.claimed && !b.claimed) return 1; // ✅ Move claimed challenges down
+        if (a.claimed && !b.claimed) return 1; // Move claimed challenges down
         if (!a.claimed && b.claimed) return -1;
-        if (a.status && !b.status) return -1; // ✅ Move completed but unclaimed up
+        if (a.status && !b.status) return -1; // Move completed but unclaimed up
         if (!a.status && b.status) return 1;  
         return 0;
       });
@@ -102,10 +107,10 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
       </h2>
       <ul>
         {challenges.map((challenge) => {
-          const meetsRequirement = savedEnergy >= challenge.requirement_kwh;
+          const meetsRequirement = savedPct >= challenge.requirement_pct;
           const progress = challenge.status
             ? 100
-            : Math.min((savedEnergy / challenge.requirement_kwh) * 100, 100);
+            : Math.min((savedPct / challenge.requirement_pct) * 100, 100);
 
           return (
             <li
@@ -155,7 +160,7 @@ function DashboardCardChallenges({ showAll = false, onPointsClaimed }) {
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 {challenge.status
                   ? `Completed on: ${formatDateToPHT(challenge.date_completed)}`
-                  : `Required: ${challenge.requirement_kwh} kWh`}
+                  : `Required: ${challenge.requirement_pct}% reduction`}
               </p>
 
               <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-3 mt-3 relative">
