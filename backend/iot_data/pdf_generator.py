@@ -8,6 +8,8 @@ from django.utils.timezone import localtime, now
 import pytz
 import matplotlib.pyplot as plt
 import matplotlib
+from datetime import datetime
+import matplotlib.dates as mdates
 
 matplotlib.use("Agg")
 
@@ -84,30 +86,66 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
     pdf.line(margin, y, W - margin, y)
     y -= 20
 
-    # === Fixed Line Chart ===
-    if len(entity_ids) > 1:
-        # Aggregate data for multiple devices
-        num_points = len(current_raw[entity_ids[0]])
-        summed_powers = []
-        for i in range(num_points):
-            total = sum(current_raw[e][i]['_value'] for e in entity_ids)
-            summed_powers.append(total)
-        powers = summed_powers
-        line_chart_title = "All Devices - Combined Power Over Time"
-    else:
-        # Single device case
-        first = entity_ids[0]
-        powers = [r["_value"] for r in current_raw[first]]
-        line_chart_title = f"{get_friendly_name(first)} - Power Over Time"
+    # === Improved Line Chart with Time Axis ===
+    def downsample(data, timestamps, step):
+        """Downsample both values and timestamps"""
+        return data[::step], timestamps[::step]
 
+    # Get base data with timestamps
+    if len(entity_ids) > 1:
+        base_data = []
+        base_timestamps = []
+        for i in range(len(current_raw[entity_ids[0]])):
+            total = sum(current_raw[e][i]['_value'] for e in entity_ids)
+            base_data.append(total)
+            base_timestamps.append(current_raw[entity_ids[0]][i]['_time'])
+        chart_title = "Combined Power Usage"
+    else:
+        base_data = [r['_value'] for r in current_raw[entity_ids[0]]]
+        base_timestamps = [r['_time'] for r in current_raw[entity_ids[0]]]
+        chart_title = f"{get_friendly_name(entity_ids[0])} Power Usage"
+
+    # Determine downsampling step
+    step = 1
+    if timeframe == '-1h':
+        step = 5
+    elif timeframe == '-1d':
+        step = 30
+    elif timeframe == '-1w':
+        step = 100
+
+    # Downsample both values and timestamps
+    sampled_values, sampled_times = downsample(base_data, base_timestamps, step)
+    
+    # Convert to datetime objects and reverse for chronological order
+    times = []
+    for ts in sampled_times:
+        if isinstance(ts, str):
+            times.append(datetime.strptime(ts, "%Y-%m-%dT%H:%M:%SZ"))
+        else:
+            times.append(ts)
+    times = times[::-1]
+    sampled_values = sampled_values[::-1]
+
+    # y axis 
     fig, ax = plt.subplots(figsize=(6.5, 4.5))
-    ax.plot(powers, color="navy")
-    ax.set_title(line_chart_title)
+    ax.plot(times, sampled_values, color="navy")
+    ax.set_title(chart_title)
     ax.set_ylabel("Watts")
-    ax.set_xlabel("Sample Index")
+    
+    # x axis text display
+    if timeframe == '-1h':
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    elif timeframe == '-1d':
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    elif timeframe == '-1w':
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+    
+    fig.autofmt_xdate(rotation=45)
     fig.tight_layout()
+
     img1 = io.BytesIO()
-    fig.savefig(img1, format="PNG", bbox_inches="tight")
+    fig.savefig(img1, format="PNG", bbox_inches='tight', dpi=100)
     plt.close(fig)
     img1.seek(0)
     pdf.drawImage(ImageReader(img1), margin, y - 260, width=520, height=220)
@@ -139,7 +177,7 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
     ax.set_title("Now vs Previous Energy Usage")
     fig.tight_layout()
     img2 = io.BytesIO()
-    fig.savefig(img2, format="PNG", bbox_inches="tight")
+    fig.savefig(img2, format="PNG", bbox_inches='tight')
     plt.close(fig)
     img2.seek(0)
     pdf.drawImage(ImageReader(img2), margin, y - 200, width=280, height=170)
@@ -150,7 +188,7 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
     ax.set_title("Appliance Breakdown")
     fig.tight_layout()
     img3 = io.BytesIO()
-    fig.savefig(img3, format="PNG", bbox_inches="tight")
+    fig.savefig(img3, format="PNG", bbox_inches='tight')
     plt.close(fig)
     img3.seek(0)
     pdf.drawImage(ImageReader(img3), margin + 290, y - 200, width=280, height=170)
