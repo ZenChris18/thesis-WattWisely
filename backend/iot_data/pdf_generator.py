@@ -42,7 +42,7 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
     if timeframe in prev_map:
         ps, pe = prev_map[timeframe]
         prev_raw = {e: fetch_power_data(e, ps, pe) for e in entity_ids}
-        total_prev = calculate_power_metrics(prev_raw.values(), interval, rate) if len(entity_ids) > 1 else None
+        total_prev = calculate_power_metrics(prev_raw.values(), interval, rate)
 
     all_entity_ids = [
         "sonoff_1001e01d7b_power",
@@ -84,13 +84,23 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
     pdf.line(margin, y, W - margin, y)
     y -= 20
 
-    # === Line Chart Fixes ===
-    first = entity_ids[0]
-    powers = [r["_value"] for r in current_raw[first]]
+    # === Fixed Line Chart ===
+    if len(entity_ids) > 1:
+        # Aggregate data for multiple devices
+        num_points = len(current_raw[entity_ids[0]])
+        summed_powers = []
+        for i in range(num_points):
+            total = sum(current_raw[e][i]['_value'] for e in entity_ids)
+            summed_powers.append(total)
+        powers = summed_powers
+        line_chart_title = "All Devices - Combined Power Over Time"
+    else:
+        # Single device case
+        first = entity_ids[0]
+        powers = [r["_value"] for r in current_raw[first]]
+        line_chart_title = f"{get_friendly_name(first)} - Power Over Time"
 
-    line_chart_title = "All Devices - Combined Power Over Time" if len(entity_ids) > 1 else f"{get_friendly_name(first)} - Power Over Time"
-
-    fig, ax = plt.subplots(figsize=(6.5, 4.5))  # this is to change size
+    fig, ax = plt.subplots(figsize=(6.5, 4.5))
     ax.plot(powers, color="navy")
     ax.set_title(line_chart_title)
     ax.set_ylabel("Watts")
