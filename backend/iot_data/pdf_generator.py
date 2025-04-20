@@ -8,6 +8,8 @@ from django.utils.timezone import localtime, now
 import pytz
 import matplotlib.pyplot as plt
 import matplotlib
+from datetime import datetime
+import matplotlib.dates as mdates
 
 matplotlib.use("Agg")
 
@@ -15,13 +17,11 @@ from .influx_service import fetch_power_data
 from .services import calculate_power_metrics
 from names.models import Appliance
 
-
 def get_friendly_name(entity_id):
     try:
         return Appliance.objects.get(entity_id=entity_id).name
     except Appliance.DoesNotExist:
         return entity_id
-
 
 def format_timeframe(tf):
     return {
@@ -29,7 +29,6 @@ def format_timeframe(tf):
         "-1d": "Last Day",
         "-1w": "Last Week"
     }.get(tf, tf)
-
 
 def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.7428):
     stop_time = "now()"
@@ -45,7 +44,7 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
     if timeframe in prev_map:
         ps, pe = prev_map[timeframe]
         prev_raw = {e: fetch_power_data(e, ps, pe) for e in entity_ids}
-        total_prev = calculate_power_metrics(prev_raw.values(), interval, rate) if len(entity_ids) > 1 else None
+        total_prev = calculate_power_metrics(prev_raw.values(), interval, rate)
 
     all_entity_ids = [
         "sonoff_1001e01d7b_power",
@@ -63,7 +62,7 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
 
     # Philippine timezone setup
     timezone = pytz.timezone("Asia/Manila")
-    philippine_time = localtime(now(), timezone) 
+    philippine_time = localtime(now(), timezone)
 
     buf = io.BytesIO()
     pdf = canvas.Canvas(buf, pagesize=letter)
@@ -71,17 +70,14 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
     margin = 40
     y = H - margin
 
-    # === Logo ===
-    logo_path = os.path.join("static", "images", "WattwiselyLogo.png")  # Logo not working 
-
-    if os.path.exists(logo_path):
-        pdf.drawImage(logo_path, margin, y - 40, width=100, preserveAspectRatio=True, mask='auto')
-
-    # === Title and Meta ===
+    # === Centered Title ===
     pdf.setFont("Helvetica-Bold", 20)
-    pdf.drawString(margin + 110, y, "WattWisely Power Usage Report")
-    y -= 30
+    title = "WattWisely Power Usage Report"
+    title_width = pdf.stringWidth(title, "Helvetica-Bold", 20)
+    pdf.drawString((W - title_width) / 2, y - 20, title) 
+    y -= 50
 
+    # === Metadata ===
     pdf.setFont("Helvetica", 12)
     pdf.drawString(margin, y, f"Selected Device(s): {', '.join(get_friendly_name(e) for e in entity_ids)}")
     y -= 20
@@ -90,20 +86,66 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
     pdf.line(margin, y, W - margin, y)
     y -= 20
 
-    # === Line Chart ===
-    first = entity_ids[0]
-    powers = [r["_value"] for r in current_raw[first]]
+    # === Improved Line Chart with Time Axis ===
+    def downsample(data, timestamps, step):
+        """Downsample both values and timestamps"""
+        return data[::step], timestamps[::step]
 
-    line_chart_title = "All Devices - Combined Power Over Time" if len(entity_ids) > 1 else f"{get_friendly_name(first)} - Power Over Time"
+    # Get base data with timestamps
+    if len(entity_ids) > 1:
+        base_data = []
+        base_timestamps = []
+        for i in range(len(current_raw[entity_ids[0]])):
+            total = sum(current_raw[e][i]['_value'] for e in entity_ids)
+            base_data.append(total)
+            base_timestamps.append(current_raw[entity_ids[0]][i]['_time'])
+        chart_title = "Combined Power Usage"
+    else:
+        base_data = [r['_value'] for r in current_raw[entity_ids[0]]]
+        base_timestamps = [r['_time'] for r in current_raw[entity_ids[0]]]
+        chart_title = f"{get_friendly_name(entity_ids[0])} Power Usage"
 
-    fig, ax = plt.subplots(figsize=(6.5, 4.5))  # this is to change size
-    ax.plot(powers, color="navy")
-    ax.set_title(line_chart_title)
+    # Determine downsampling step
+    step = 1
+    if timeframe == '-1h':
+        step = 5
+    elif timeframe == '-1d':
+        step = 30
+    elif timeframe == '-1w':
+        step = 100
+
+    # Downsample both values and timestamps
+    sampled_values, sampled_times = downsample(base_data, base_timestamps, step)
+    
+    # Convert to datetime objects and reverse for chronological order
+    times = []
+    for ts in sampled_times:
+        if isinstance(ts, str):
+            times.append(datetime.strptime(ts, "%Y-%m-%dT%H:%M:%SZ"))
+        else:
+            times.append(ts)
+    times = times[::-1]
+    sampled_values = sampled_values[::-1]
+
+    # y axis 
+    fig, ax = plt.subplots(figsize=(6.5, 4.5))
+    ax.plot(times, sampled_values, color="navy")
+    ax.set_title(chart_title)
     ax.set_ylabel("Watts")
-    ax.set_xlabel("Sample Index")
+    
+    # x axis text display
+    if timeframe == '-1h':
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    elif timeframe == '-1d':
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    elif timeframe == '-1w':
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+    
+    fig.autofmt_xdate(rotation=45)
     fig.tight_layout()
+
     img1 = io.BytesIO()
-    fig.savefig(img1, format="PNG", bbox_inches="tight")
+    fig.savefig(img1, format="PNG", bbox_inches='tight', dpi=100)
     plt.close(fig)
     img1.seek(0)
     pdf.drawImage(ImageReader(img1), margin, y - 260, width=520, height=220)
@@ -119,7 +161,7 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
         change_str = "No previous data available"
 
     pdf.setFont("Helvetica-Bold", 14)
-    pdf.drawString(margin, y, "📊 Summary") # Change emoji to something pdf can display
+    pdf.drawString(margin, y, "Summary")
     y -= 20
 
     pdf.setFont("Helvetica", 12)
@@ -135,7 +177,7 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
     ax.set_title("Now vs Previous Energy Usage")
     fig.tight_layout()
     img2 = io.BytesIO()
-    fig.savefig(img2, format="PNG", bbox_inches="tight")
+    fig.savefig(img2, format="PNG", bbox_inches='tight')
     plt.close(fig)
     img2.seek(0)
     pdf.drawImage(ImageReader(img2), margin, y - 200, width=280, height=170)
@@ -146,7 +188,7 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
     ax.set_title("Appliance Breakdown")
     fig.tight_layout()
     img3 = io.BytesIO()
-    fig.savefig(img3, format="PNG", bbox_inches="tight")
+    fig.savefig(img3, format="PNG", bbox_inches='tight')
     plt.close(fig)
     img3.seek(0)
     pdf.drawImage(ImageReader(img3), margin + 290, y - 200, width=280, height=170)
@@ -155,9 +197,7 @@ def build_power_usage_pdf(entity_ids, timeframe, device, interval=30, rate=11.74
 
     # === Footer Section ===
     pdf.setFont("Helvetica-Oblique", 10)
-    # Left: Generator tag
-    pdf.drawString(margin, 30, "Generated by WattWisely • Stay efficient ⚡") # Change emoji to something pdf can display
-    # Right: Timestamp again (bottom-right)
+    pdf.drawString(margin, 30, "Generated by WattWisely • Stay efficient")
     timestamp = philippine_time.strftime("Generated on: %Y-%m-%d %H:%M:%S")
     time_width = pdf.stringWidth(timestamp, "Helvetica-Oblique", 10)
     pdf.drawString(W - margin - time_width, 30, timestamp)
