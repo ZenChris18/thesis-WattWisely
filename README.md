@@ -30,6 +30,12 @@
 
 3. npm run dev -- --host (go to new_frontend folder)
 
+## Docker Commands 
+
+1. docker compose build
+
+2. 
+
 ## Other commands
 
 1. python manage.py createsuperuser - then type new info to access django admin if you want a different user
