@@ -9,7 +9,7 @@ COPY . .
 
 RUN npm run build
 
-# Serve with a simple web server (you can use nginx if needed)
+# Serve with a simple web server
 RUN npm install -g serve
-CMD ["serve", "-s", "build", "-l", "0.0.0.0:3000"]
+CMD ["serve", "-s", "dist", "-l", "3000"]
 
