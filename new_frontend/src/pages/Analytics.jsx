@@ -200,7 +200,7 @@ function Analytics() {
           Score: {score}
         </p>
         <p className="text-gray-500 dark:text-gray-400 text-sm">
-          Keep the lights on while we generate your report! 🏆
+          Tap the lights while we generate your report! 🏆
         </p>
       </div>
     </div>
