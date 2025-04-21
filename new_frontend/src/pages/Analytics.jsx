@@ -18,6 +18,9 @@ function Analytics() {
     return JSON.parse(localStorage.getItem("applianceNames")) || {};
   });
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [lightPosition, setLightPosition] = useState({ x: 50, y: 50 });
+  const [score, setScore] = useState(0);
+  const [isLightVisible, setIsLightVisible] = useState(false);  
 
   const handleDownloadPdf = async () => {
     const tf = timeframeMapping[selectedTimeframe] || "-1h";
@@ -76,6 +79,35 @@ function Analytics() {
     }
   };
 
+  // for minigame in PDF generation
+  useEffect(() => {
+    if (!isGeneratingPdf) return;
+  
+    // Light toggle interval
+    const lightInterval = setInterval(() => {
+      setIsLightVisible(prev => {
+        if (!prev) {
+          // Only move position when appearing
+          setLightPosition({
+            x: Math.random() * 90,
+            y: Math.random() * 90
+          });
+        }
+        return !prev;
+      });
+    }, 1500);
+  
+    return () => clearInterval(lightInterval);
+  }, [isGeneratingPdf]);
+  
+  useEffect(() => {
+    if (!isGeneratingPdf) {
+      setScore(0); // Reset score when done
+      setIsLightVisible(false);
+    }
+  }, [isGeneratingPdf]);
+
+  // next effect
   useEffect(() => {
     loadAppliances();
   }, [selectedTimeframe]);
@@ -134,13 +166,43 @@ function Analytics() {
 {isGeneratingPdf && (
   <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg flex flex-col items-center w-full max-w-[90%] sm:max-w-md mx-auto shadow-xl">
-      <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-purple-600 mb-2 sm:mb-4"></div>
-      <p className="text-gray-700 dark:text-gray-300 text-base sm:text-lg text-center">
-        Generating PDF report...
-      </p>
-      <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mt-1 sm:mt-2 text-center">
-        This may take up to 30 seconds for weekly reports
-      </p>
+      {/* Game Container */}
+      <div 
+        className="relative w-64 h-64 bg-gray-100 dark:bg-gray-900 rounded-lg mb-4 overflow-hidden cursor-pointer"
+        onClick={() => {
+          if (isLightVisible) {
+            setScore(s => s + 1);
+            setIsLightVisible(false);
+          }
+        }}
+      >
+        {/* Animated Light */}
+        {isLightVisible && (
+          <div 
+            className="absolute w-8 h-8 bg-yellow-400 rounded-full shadow-lg animate-ping"
+            style={{
+              left: `${lightPosition.x}%`,
+              top: `${lightPosition.y}%`,
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
+            <div className="absolute inset-0 bg-yellow-300 rounded-full animate-pulse"></div>
+          </div>
+        )}
+      </div>
+
+      {/* Status Info */}
+      <div className="text-center">
+        <p className="text-gray-700 dark:text-gray-300 text-lg mb-2">
+          {isLightVisible ? "💡 Tap the light!" : "Generating PDF..."}
+        </p>
+        <p className="text-blue-600 dark:text-blue-400 text-2xl font-bold mb-2">
+          Score: {score}
+        </p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">
+          Keep the lights on while we generate your report! 🏆
+        </p>
+      </div>
     </div>
   </div>
 )}
