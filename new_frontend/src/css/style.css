@@ -155,7 +155,14 @@ body {
 }
 
 
+/* This is for the loading screen of downloading pdf*/
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
 
 
 
@@ -314,4 +321,15 @@ body {
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
+}
+
+/* Download PDF button */ 
+@keyframes border-pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}
+
+.animate-border-pulse {
+  animation: border-pulse 2.5s ease-in-out infinite;
 }
