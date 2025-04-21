@@ -17,23 +17,26 @@ function Analytics() {
   const [applianceNames, setApplianceNames] = useState(() => {
     return JSON.parse(localStorage.getItem("applianceNames")) || {};
   });
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
   const handleDownloadPdf = async () => {
     const tf = timeframeMapping[selectedTimeframe] || "-1h";
     const device = selectedAppliance?.id || "all";
+    setIsGeneratingPdf(true);
     try {
       const blob = await exportPowerPdf(tf, device);
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement("a");
-      a.href     = url;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
       a.download = "power_report.pdf";
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {
       console.error("PDF download error:", e);
+    } finally {
+      setIsGeneratingPdf(false);
     }
   };
-  
 
   const [appliances, setAppliances] = useState([
     { id: "choose", name: "Choose Appliance" },
@@ -127,6 +130,21 @@ function Analytics() {
 
   return (
     <div className="flex h-screen overflow-hidden">
+{/* Loading Overlay */}
+{isGeneratingPdf && (
+  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg flex flex-col items-center w-full max-w-[90%] sm:max-w-md mx-auto shadow-xl">
+      <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-purple-600 mb-2 sm:mb-4"></div>
+      <p className="text-gray-700 dark:text-gray-300 text-base sm:text-lg text-center">
+        Generating PDF report...
+      </p>
+      <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mt-1 sm:mt-2 text-center">
+        This may take up to 30 seconds for weekly reports
+      </p>
+    </div>
+  </div>
+)}
+
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -134,7 +152,7 @@ function Analytics() {
         {/* Sticky Buttons Section */}
         <div
           className={`sticky top-15 bg-white dark:bg-gray-900 py-3 shadow-md transition-all duration-300 ${
-            sidebarOpen ? "z-10" : "z-29" /* change second z to 29 to be below the dropdown profile */
+            sidebarOpen ? "z-10" : "z-29"
           }`}
         >
           <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
@@ -188,53 +206,67 @@ function Analytics() {
                 </div>
               )}
             </div>
+
+            {/* Generate Reports Button */}
 {/* Generate Reports Button */}
 <button
   onClick={handleDownloadPdf}
-  className="ml-auto bg-gradient-to-r from-purple-600 to-purple-500 text-white px-5 py-2 rounded-lg 
-  font-semibold hover:from-purple-700 hover:to-purple-600 transition-all duration-300 
-  shadow-lg hover:shadow-xl active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-600 
-  focus:ring-opacity-50 flex items-center gap-2"
+  disabled={isGeneratingPdf}
+  className={`
+    ml-auto 
+    bg-gradient-to-br from-blue-600 to-blue-500
+    text-white px-5 py-2 rounded-lg
+    font-semibold 
+    hover:from-blue-700 hover:to-blue-600 
+    transition-all duration-300
+    shadow-md hover:shadow-lg 
+    active:scale-[0.98]
+    focus:outline-none focus:ring-2 focus:ring-blue-500/50
+    border border-blue-700/30
+    relative
+    ${isGeneratingPdf ? 'opacity-90 cursor-not-allowed' : ''}
+  `}
 >
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    className="h-5 w-5" 
-    viewBox="0 0 20 20" 
-    fill="currentColor"
-  >
-    <path 
-      fillRule="evenodd" 
-      d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" 
-      clipRule="evenodd" 
-    />
-  </svg>
-  Generate Reports
+  <div className="flex items-center gap-2">
+    {isGeneratingPdf ? (
+      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/80 border-t-transparent"></div>
+    ) : (
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        className="h-5 w-5"
+        viewBox="0 0 20 20" 
+        fill="currentColor"
+      >
+        <path 
+          fillRule="evenodd" 
+          d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" 
+          clipRule="evenodd" 
+        />
+      </svg>
+    )}
+    <span className="text-sm sm:text-base">
+      {isGeneratingPdf ? 'Generating...' : 'Generate Report'}
+    </span>
+  </div>
 </button>
-              </div>
-            </div>
+          </div>
+        </div>
 
         <main className="grow px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col gap-6">
-            {/* Full-width DashboardCard01 */}
             <DashboardCard01 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />
-
-            {/* DashboardCard02 & DashboardCard03 side by side using grid-cols-12 */}
+            
             <div className="grid grid-cols-12 gap-6">
               <DashboardCard02 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} className="col-span-6" />
               <DashboardCard03 className="col-span-6" />
-              <DashboardCard03 className="col-span-6" /> {/* Placeholder for now change in the future with a new card*/}
+              <DashboardCard03 className="col-span-6" />
             </div>
 
-            {/* Power Usage Insights Section */}
             <div className="mt-8 space-y-6">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Power Usage Insights</h2>
-
-              {/* Full-width DashboardCard05 */}
               <div className="pb-6">
                 <DashboardCard05 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />
               </div>
-
-              {/* Full-width DashboardCard06 */}
               <DashboardCard06 selectedTimeframe={selectedTimeframe} />
             </div>
           </div>
