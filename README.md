@@ -32,9 +32,9 @@
 
 ## Docker Commands 
 
-1. docker compose build
+1. docker compose build -d
 
-2. 
+2. docker-compose down -v
 
 ## Other commands
 

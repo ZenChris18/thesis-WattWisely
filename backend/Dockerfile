@@ -1,4 +1,10 @@
 FROM python:3.12-slim
+
+# Install system dependencies (including sqlite3)
+RUN apt-get update && apt-get install -y \
+    sqlite3 \
+    && rm -rf /var/lib/apt/lists/*
+    
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
 
