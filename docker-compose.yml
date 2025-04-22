@@ -1,37 +1,50 @@
 version: '3.9'
+
 services:
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    restart: unless-stopped
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=supersecret
+      - DOCKER_INFLUXDB_INIT_ORG=thesis
+      - DOCKER_INFLUXDB_INIT_BUCKET=wattwisely
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=ZqgqJU0E-puJtMTk6jvhIb2prakV6btQnsw4gxQJGxgcj1xRwtaao62PsQ0lK0FHLPnonYbPTG8iEbe7bXroJA==
+
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - influxdb
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=ZqgqJU0E-puJtMTk6jvhIb2prakV6btQnsw4gxQJGxgcj1xRwtaao62PsQ0lK0FHLPnonYbPTG8iEbe7bXroJA==
+      - INFLUXDB_ORG=thesis
+      - INFLUXDB_BUCKET=wattwisely
+
   frontend:
-    build:
-      context: ./new_frontend
+    build: ./new_frontend
+    container_name: frontend
     ports:
       - "80:80"
     depends_on:
       - backend
 
-  backend:
-    build:
-      context: ./backend
-    ports:
-      - "8000:8000"
-    environment:
-      - INFLUXDB_HOST=influxdb
-    depends_on:
-      - influxdb
-
   homeassistant:
-    image: ghcr.io/home-assistant/home-assistant:stable
+    build: ./homeassistant-custom
     container_name: homeassistant
-    network_mode: host
-    volumes:
-      - ./homeassistant_config:/config
+    ports:
+      - "8123:8123"
     restart: unless-stopped
     privileged: true
 
-  influxdb:
-    image: influxdb:2.7
-    container_name: influxdb
-    volumes:
-      - ./influxdb_data:/var/lib/influxdb2
-    ports:
-      - "8086:8086"
-    restart: unless-stopped
+volumes:
+  influxdb_data:
