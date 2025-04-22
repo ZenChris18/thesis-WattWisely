@@ -6,3 +6,5 @@ backend/.env
 venv
 backend/venv
 backend/db.sqlite3
+homeassistant_config
+influxdb_data

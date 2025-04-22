@@ -3,7 +3,7 @@ const IP = "localhost"; // Change this if the IP address if changing wifi // loc
 export const fetchPowerData = async (timeframe) => {
   // get graph data
   try {
-    const url = `http://${IP}:8000/api/power-data/?start=${timeframe}`;
+    const url = `/api/power-data/?start=${timeframe}`;
     console.log("Fetching:", url);
     const response = await fetch(url);
     if (!response.ok) {
@@ -20,7 +20,7 @@ export const fetchPowerData = async (timeframe) => {
 // function for fetching appliance names
 export const fetchApplianceNames = async () => {
   try {
-    const url = `http://${IP}:8000/names/get-names/`;
+    const url = `/names/get-names/`;
     console.log("Fetching appliance names:", url);
     const response = await fetch(url);
     if (!response.ok) {
@@ -38,7 +38,7 @@ export const fetchApplianceNames = async () => {
 // update appliance name
 export const updateApplianceName = async (id, newName) => {
   try {
-    const response = await fetch(`http://${IP}:8000/names/update-name/`, {
+    const response = await fetch(`/names/update-name/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ entity_id: id, name: newName })
@@ -58,7 +58,7 @@ export const updateApplianceName = async (id, newName) => {
 // Fetch daily challenges
 export const fetchChallenges = async () => {
   try {
-    const response = await fetch(`http://${IP}:8000/challenges/?t=${new Date().getTime()}`);
+    const response = await fetch(`/challenges/?t=${new Date().getTime()}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch challenges. Status: ${response.status}`);
     }
@@ -79,7 +79,7 @@ export const fetchChallenges = async () => {
 // Fetch weekly challenges
 export const fetchWeeklyChallenges = async () => {
   try {
-    const response = await fetch(`http://${IP}:8000/challenges/weekly/`);
+    const response = await fetch(`/challenges/weekly/`);
     if (!response.ok) {
       throw new Error(`Failed to fetch weekly challenges. Status: ${response.status}`);
     }
@@ -100,7 +100,7 @@ export const fetchWeeklyChallenges = async () => {
 // Complete a daily challenge
 export const completeChallenge = async (challengeId) => {
   try {
-    const response = await fetch(`http://${IP}:8000/challenges/complete/`, {
+    const response = await fetch(`/challenges/complete/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challenge_id: challengeId }),
@@ -123,7 +123,7 @@ export const completeChallenge = async (challengeId) => {
 // Complete a weekly challenge
 export const completeWeeklyChallenge = async (challengeId) => {
   try {
-    const response = await fetch(`http://${IP}:8000/challenges/weekly/complete/`, {
+    const response = await fetch(`/challenges/weekly/complete/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challenge_id: challengeId }),
@@ -146,7 +146,7 @@ export const completeWeeklyChallenge = async (challengeId) => {
 // Claim points for a daily challenge
 export const claimChallengePoints = async (challengeId) => {
   try {
-    const response = await fetch(`http://${IP}:8000/challenges/claim-points/`, {
+    const response = await fetch(`/challenges/claim-points/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challenge_id: challengeId }),
@@ -165,7 +165,7 @@ export const claimChallengePoints = async (challengeId) => {
 // Claim points for a weekly challenge
 export const claimWeeklyChallengePoints = async (challengeId) => {
   try {
-    const response = await fetch(`http://${IP}:8000/challenges/weekly/claim-points/`, {
+    const response = await fetch(`/challenges/weekly/claim-points/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challenge_id: challengeId }),
@@ -183,7 +183,7 @@ export const claimWeeklyChallengePoints = async (challengeId) => {
 
 export const fetchTotalPoints = async () => {
   try {
-    const response = await fetch(`http://${IP}:8000/achievements/total-points/`); 
+    const response = await fetch(`/achievements/total-points/`); 
     if (!response.ok) {
       throw new Error(`Failed to fetch total points. Status: ${response.status}`);
     }
@@ -199,7 +199,7 @@ export const fetchTotalPoints = async () => {
 // get unlocked badges
 export const fetchUnlockedBadges = async () => {
   try {
-    const response = await fetch(`http://${IP}:8000/achievements/unlocked-badges/`);
+    const response = await fetch(`/achievements/unlocked-badges/`);
     if (!response.ok) throw new Error("Failed to fetch unlocked badges");
     const data = await response.json();
     return data.unlocked_badges || [];
@@ -214,7 +214,7 @@ export const fetchUnlockedBadges = async () => {
 // get all badges
 export const fetchBadges = async () => {
   try {
-    const response = await fetch(`http://${IP}:8000/achievements/badges/`);
+    const response = await fetch(`/achievements/badges/`);
     if (!response.ok) {
       throw new Error("Failed to fetch badges");
     }
@@ -230,7 +230,7 @@ export const fetchBadges = async () => {
 // set selected badge
 export const setBadgeShowcase = async (badgeId) => {
   try {
-    const response = await fetch(`http://${IP}:8000/achievements/select-badge/`, {
+    const response = await fetch(`/achievements/select-badge/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -252,7 +252,7 @@ export const setBadgeShowcase = async (badgeId) => {
 
 export const getSelectedBadge = async () => {
   try {
-    const response = await fetch(`http://${IP}:8000/achievements/selected-badge/`, {
+    const response = await fetch(`/achievements/selected-badge/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -277,7 +277,7 @@ export const getSelectedBadge = async () => {
 };
 
 export const exportPowerPdf = async (timeframe, device = "all") => {
-  const url = `http://${IP}:8000/api/export-pdf/?start=${timeframe}&device=${device}`;
+  const url = `/api/export-pdf/?start=${timeframe}&device=${device}`;
   const resp = await fetch(url);
   if (!resp.ok) {
     throw new Error(`PDF export failed: ${resp.status}`);

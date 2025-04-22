@@ -1,15 +1,14 @@
-FROM node:20
-
+# 1) Build with Node+Vite
+FROM node:20-slim AS build
 WORKDIR /app
-
 COPY package*.json ./
-RUN npm install
-
+RUN npm ci
 COPY . .
+RUN npm run build           # outputs /app/dist
 
-RUN npm run build
-
-# Serve with a simple web server
-RUN npm install -g serve
-CMD ["serve", "-s", "dist", "-l", "3000"]
-
+# 2) Serve with nginx + our config
+FROM nginx:alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

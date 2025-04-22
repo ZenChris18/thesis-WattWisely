@@ -1,23 +1,37 @@
-version: '3'
+version: '3.9'
 services:
   frontend:
     build:
-      context: ./new_frontend 
+      context: ./new_frontend
     ports:
-      - "3000:3000"
-    networks:
-      - app-network
+      - "80:80"
+    depends_on:
+      - backend
 
   backend:
     build:
       context: ./backend
     ports:
       - "8000:8000"
-    networks:
-      - app-network
+    environment:
+      - INFLUXDB_HOST=influxdb
     depends_on:
-      - frontend
+      - influxdb
 
-networks:
-  app-network:
-    driver: bridge
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    network_mode: host
+    volumes:
+      - ./homeassistant_config:/config
+    restart: unless-stopped
+    privileged: true
+
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    volumes:
+      - ./influxdb_data:/var/lib/influxdb2
+    ports:
+      - "8086:8086"
+    restart: unless-stopped
