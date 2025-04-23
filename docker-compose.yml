@@ -4,6 +4,8 @@ services:
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
+    networks:
+      - main_net
     ports:
       - "8086:8086"
     volumes:
@@ -20,6 +22,8 @@ services:
   backend:
     build: ./backend
     container_name: backend
+    networks:
+      - main_net
     ports:
       - "8000:8000"
     depends_on:
@@ -41,10 +45,19 @@ services:
   homeassistant:
     build: ./homeassistant-custom
     container_name: homeassistant
+    networks:
+      - main_net
     ports:
       - "8123:8123"
     restart: unless-stopped
     privileged: true
+    volumes:
+    - ./homeassistant-custom/config:/config 
 
 volumes:
   influxdb_data:
+  homeassistant_data:
+
+networks:  # this is for home assistant to send data to influxdb
+  main_net:
+    driver: bridge
