@@ -37,6 +37,8 @@ services:
   frontend:
     build: ./new_frontend
     container_name: frontend
+    networks:
+      - main_net
     ports:
       - "80:80"
     depends_on:
@@ -53,6 +55,7 @@ services:
     privileged: true
     volumes:
     - ./homeassistant-custom/config:/config 
+    - ./ha-backups:/backup
 
 volumes:
   influxdb_data:
@@ -61,3 +64,4 @@ volumes:
 networks:  # this is for home assistant to send data to influxdb
   main_net:
     driver: bridge
+    attachable: true
