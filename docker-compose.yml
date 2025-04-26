@@ -57,18 +57,6 @@ services:
     - ./homeassistant-custom/config:/config 
     - ./ha-backups:/backup
 
-  avahi:
-    image: flungo/avahi:latest
-    container_name: avahi
-    network_mode: host
-    privileged: true
-    restart: unless-stopped
-    volumes:
-      - ./avahi-daemon.conf:/etc/avahi/avahi-daemon.conf:ro
-      - ./new_frontend/avahi-service.conf:/etc/avahi/services/wattwisely.service:ro
-    environment:
-      HOSTNAME: wattwisely
-
 volumes:
   influxdb_data:
   homeassistant_data:

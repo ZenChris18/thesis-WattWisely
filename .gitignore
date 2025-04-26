@@ -11,3 +11,4 @@ influxdb_data
 homeassistant-custom/config
 new_frontend/avahi-service.conf
 avahi-daemon.conf
+ha-backups/
