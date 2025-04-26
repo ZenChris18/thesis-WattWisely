@@ -6,3 +6,9 @@ backend/.env
 venv
 backend/venv
 backend/db.sqlite3
+homeassistant_config
+influxdb_data
+homeassistant-custom/config
+new_frontend/avahi-service.conf
+avahi-daemon.conf
+ha-backups/
