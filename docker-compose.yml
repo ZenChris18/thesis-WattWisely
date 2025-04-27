@@ -33,6 +33,7 @@ services:
       - INFLUXDB_TOKEN=ZqgqJU0E-puJtMTk6jvhIb2prakV6btQnsw4gxQJGxgcj1xRwtaao62PsQ0lK0FHLPnonYbPTG8iEbe7bXroJA==
       - INFLUXDB_ORG=thesis
       - INFLUXDB_BUCKET=wattwisely
+    restart: unless-stopped
 
   frontend:
     build: ./new_frontend
@@ -43,6 +44,7 @@ services:
       - "80:80"
     depends_on:
       - backend
+    restart: unless-stopped
 
   homeassistant:
     build: ./homeassistant-custom
