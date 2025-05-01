@@ -12,3 +12,5 @@ homeassistant-custom/config
 new_frontend/avahi-service.conf
 avahi-daemon.conf
 ha-backups/
+influx_data.py
+influx_data.csv
