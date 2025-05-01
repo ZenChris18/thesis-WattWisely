@@ -46,22 +46,8 @@ services:
       - backend
     restart: unless-stopped
 
-  homeassistant:
-    build: ./homeassistant-custom
-    container_name: homeassistant
-    networks:
-      - main_net
-    ports:
-      - "8123:8123"
-    restart: unless-stopped
-    privileged: true
-    volumes:
-    - ./homeassistant-custom/config:/config 
-    - ./ha-backups:/backup
-
 volumes:
   influxdb_data:
-  homeassistant_data:
 
 networks:
   main_net:
