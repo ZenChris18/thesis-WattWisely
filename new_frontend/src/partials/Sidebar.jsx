@@ -5,6 +5,8 @@ import wattwiselyLogo from '../images/WattwiselyLogo.png';
 import { usePoints } from "../contexts/PointsContext"; 
 import { fetchUnlockedBadges } from "../services/powerDataService";
 
+import { LogOut } from "lucide-react";
+
 function Sidebar({
   sidebarOpen,
   setSidebarOpen,
@@ -23,6 +25,13 @@ function Sidebar({
   
   // count the badges
   const [badgeCount, setBadgeCount] = useState(0);
+
+  // Log out
+  const handleLogout=()=>{
+    localStorage.removeItem("usernameData");
+  localStorage.removeItem("passwordData");
+  window.location.href = "/tologin";
+  }
 
   useEffect(() => {
     const getBadges = async () => {
@@ -225,6 +234,18 @@ function Sidebar({
             </ul>
           </div>
         </div>
+
+        {/*Log Out*/}
+        <div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center space-x-2 text-gray-500 hover:text-blue-500"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Log Out</span>
+          </button>
+        </div>
+
 
         {/* Expand / collapse button */}
         <div className="pt-3 hidden lg:inline-flex 2xl:hidden justify-end mt-auto">

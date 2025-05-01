@@ -17,6 +17,9 @@ import LoadingScreen from './components/LoadingScreen';
 import { PointsProvider } from './contexts/PointsContext'; // Imports the PointsProvider
 import { BadgeProvider } from './contexts/BadgeContext';
 
+// Logging import
+import LoginWithLocalStorage from "./components/LoginWithLocalStorage/LoginWithLocalStorage";
+
 function App() {
   const [showStartScreen, setShowStartScreen] = useState(() => {
     return localStorage.getItem('hasSeenStartScreen') ? false : true;
@@ -54,6 +57,7 @@ function App() {
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/challenges" element={<Challenges />} />
             <Route path="/badges" element={<Badges />} />
+            <Route path="/tologin" element={<LoginWithLocalStorage />} />
           </Routes>
         )}
       </AnimatePresence>
