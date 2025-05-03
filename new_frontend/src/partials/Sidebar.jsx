@@ -235,17 +235,28 @@ function Sidebar({
           </div>
         </div>
 
-        {/*Log Out*/}
-        <div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center space-x-2 text-gray-500 hover:text-blue-500"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Log Out</span>
-          </button>
-        </div>
-
+  {/* Log Out Section */}
+  <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+    <h3 className="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3 mb-2">
+      <span className="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">
+        •••
+      </span>
+      <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">Account</span>
+    </h3>
+    <ul className="mt-2">
+      <li className="pl-4 pr-3 py-2 rounded-lg hover:bg-red-500/[0.1] dark:hover:bg-red-500/[0.1] transition-colors group">
+        <button
+          onClick={handleLogout}
+          className="flex items-center w-full text-gray-800 dark:text-gray-100"
+        >
+          <LogOut className="shrink-0 w-5 h-5 text-red-500 group-hover:text-red-600 dark:group-hover:text-red-400" />
+          <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+            Log Out
+          </span>
+        </button>
+      </li>
+    </ul>
+  </div>
 
         {/* Expand / collapse button */}
         <div className="pt-3 hidden lg:inline-flex 2xl:hidden justify-end mt-auto">
