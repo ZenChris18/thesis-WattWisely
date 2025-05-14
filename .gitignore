@@ -14,4 +14,5 @@ avahi-daemon.conf
 ha-backups/
 influx_data.py
 influx_data.csv
+homeassistant
 
