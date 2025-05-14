@@ -11,4 +11,5 @@
 
 #### Check if installed
 - docker compose version
- 
+- docker-compose build --no-cache frontend
+- docker-compose up -d --force-recreate frontend
