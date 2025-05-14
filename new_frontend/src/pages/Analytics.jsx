@@ -6,6 +6,7 @@ import DashboardCard02 from '../partials/dashboard/DashboardCard02';
 import DashboardCard03 from '../partials/dashboard/DashboardCard03';
 import DashboardCard05 from '../partials/dashboard/DashboardCard05';
 import DashboardCard06 from '../partials/dashboard/DashboardCard06';
+import DashboardCard07 from '../partials/dashboard/DashboardCard07';
 import { Edit2, AlertTriangle } from 'lucide-react';
 import { fetchPowerData, fetchApplianceNames, updateApplianceName, exportPowerPdf } from '../services/powerDataService';
 
@@ -239,7 +240,7 @@ function Analytics() {
                 </div>
               )}
 
-              <div className="flex gap-4">
+              <div className="flex gap-4 min-w-0">
                 <div className="relative" ref={timeframeDropdownRef}>
                   <button
                     onClick={() => toggleDropdown("timeframe")}
@@ -289,46 +290,48 @@ function Analytics() {
                   )}
                 </div>
 
-                <button
-                  onClick={handleDownloadPdf}
-                  disabled={isGeneratingPdf}
-                  className={`
-                    ml-auto 
-                    bg-gradient-to-br from-blue-600 to-blue-500
-                    text-white px-5 py-2 rounded-lg
-                    font-semibold 
-                    hover:from-blue-700 hover:to-blue-600 
-                    transition-all duration-300
-                    shadow-md hover:shadow-lg 
-                    active:scale-[0.98]
-                    focus:outline-none focus:ring-2 focus:ring-blue-500/50
-                    border border-blue-700/30
-                    relative
-                    ${isGeneratingPdf ? 'opacity-90 cursor-not-allowed' : ''}
-                  `}
-                >
-                  <div className="flex items-center gap-2">
-                    {isGeneratingPdf ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/80 border-t-transparent"></div>
-                    ) : (
-                      <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20" 
-                        fill="currentColor"
-                      >
-                        <path 
-                          fillRule="evenodd" 
-                          d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" 
-                          clipRule="evenodd" 
-                        />
-                      </svg>
-                    )}
-                    <span className="text-sm sm:text-base">
-                      {isGeneratingPdf ? 'Generating...' : 'Generate Report'}
-                    </span>
-                  </div>
-                </button>
+  {/* Generate Report Button - Updated */}
+  <button
+    onClick={handleDownloadPdf}
+    disabled={isGeneratingPdf}
+    className={`
+      ml-auto 
+      bg-gradient-to-br from-blue-600 to-blue-500
+      text-white px-3 sm:px-5 py-2 rounded-lg
+      font-semibold 
+      hover:from-blue-700 hover:to-blue-600 
+      transition-all duration-300
+      shadow-md hover:shadow-lg 
+      active:scale-[0.98]
+      focus:outline-none focus:ring-2 focus:ring-blue-500/50
+      border border-blue-700/30
+      relative
+      min-w-0 overflow-hidden
+      ${isGeneratingPdf ? 'opacity-90 cursor-not-allowed' : ''}
+    `}
+  >
+    <div className="flex items-center gap-2 min-w-0">
+      {isGeneratingPdf ? (
+        <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/80 border-t-transparent"></div>
+      ) : (
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          className="h-5 w-5"
+          viewBox="0 0 20 20" 
+          fill="currentColor"
+        >
+          <path 
+            fillRule="evenodd" 
+            d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" 
+            clipRule="evenodd" 
+          />
+        </svg>
+      )}
+      <span className="text-sm sm:text-base truncate">
+        {isGeneratingPdf ? 'PDF' : 'Generate Report'}
+      </span>
+    </div>
+  </button>
               </div>
             </div>
           </div>
@@ -338,10 +341,16 @@ function Analytics() {
               <DashboardCard01 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} />
               
               <div className="grid grid-cols-12 gap-6">
+                <DashboardCard03 className="col-span-6" />
                 <DashboardCard02 selectedTimeframe={selectedTimeframe} selectedAppliance={selectedAppliance} className="col-span-6" />
                 <DashboardCard03 className="col-span-6" />
-                <DashboardCard03 className="col-span-6" />
-              </div>
+              </div>   
+                {/* Second Row - Card 07 */}
+                <DashboardCard07 
+                  selectedTimeframe={selectedTimeframe} 
+                  selectedAppliance={selectedAppliance} 
+                  className="w-full"
+                />
 
               <div className="mt-8 space-y-6">
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Power Usage Insights</h2>
