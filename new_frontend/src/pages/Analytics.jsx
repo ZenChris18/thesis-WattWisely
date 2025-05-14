@@ -65,7 +65,20 @@ function Analytics() {
         const fetchedAppliances = powerData.appliances.map((appliance, index) => ({
           id: appliance.entity_id,
           name: backendNames[appliance.entity_id] || `Appliance ${index + 1}`,
+          current: appliance.current // Include current power data
         }));
+
+        // Find appliance with highest current average power
+        let highestAppliance = fetchedAppliances.reduce((maxAppliance, currentAppliance) => {
+          const currentPower = currentAppliance.current?.average_power_w || 0;
+          const maxPower = maxAppliance.current?.average_power_w || 0;
+          return currentPower > maxPower ? currentAppliance : maxAppliance;
+        }, fetchedAppliances[0] || {});
+
+        // Set initial selection to highest appliance if available
+        if (!selectedAppliance && fetchedAppliances.length > 0) {
+          setSelectedAppliance(highestAppliance);
+        }
 
         setApplianceNames(backendNames);
         setAppliances([
